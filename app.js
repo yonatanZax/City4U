@@ -6,9 +6,15 @@ var logger = require('morgan');
 var DButilsAzure = require('./DButils');
 
 
+// ***  Routers     ***
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var categoriesRouter = require('./routes/categories');
+var interestPointsRouter = require('./routes/interest_points');
+var dbSqlRouter = require('./routes/db_sql');
+
+
 
 var app = express();
 
@@ -28,8 +34,19 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+
+// ***  Routers use    ***
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/interest_points', interestPointsRouter);
+app.use('/categories', categoriesRouter);
+app.use('/db', dbSqlRouter);
+
+
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -61,10 +78,10 @@ app.get('/select', function(req, res){
             res.send(result)
         })
         .catch(function(err){
-            console.log(err)
-            res.send(err)
+            console.log(err);
+            res.send(err);
         })
-})
+});
 
 
 
