@@ -8,12 +8,16 @@ var Enums = require('../Enum');
 
 
 
-// Todo - /getInterestPoint
-router.get('/getInterestPoint',(req,res,next)=>{
-    p = DButilsAzure.execQuery('');
+// Todo - /getInterestPoint - OK
+router.get('/getInterestPoint/:pID',(req,res,next)=>{
+    var params = req.params;
+    var pointID = params.pID;
+
+    p = DButilsAzure.execQuery(`
+        SELECT * FROM Points WHERE pID = ${pointID}
+    `);
     p
         .then(result=>{
-            console.log(result);
             res.status(Enums.status_OK).send(result);
         })
         .catch(error => {
@@ -23,12 +27,15 @@ router.get('/getInterestPoint',(req,res,next)=>{
 });
 
 
-// Todo - /getThreeRandPopularPoints
+// Todo - /getThreeRandPopularPoints - OK
 router.get('/getThreeRandPopularPoints',(req,res,next)=>{
-    p = DButilsAzure.execQuery('');
+    p = DButilsAzure.execQuery(`
+        SELECT TOP(3) pID
+        FROM Points
+        ORDER BY NEWID()
+    `);
     p
         .then(result=>{
-            console.log(result);
             res.status(Enums.status_OK).send(result);
         })
         .catch(error => {
@@ -59,7 +66,26 @@ router.get('/getPointsByCategories/', (req,res)=>{
 
 
 
+// Todo - /getPointsByName - OK
+router.get('/getPointsByName/:pName',(req,res,next)=>{
+    var params = req.params;
+    var pName = params.pName;
 
+    p = DButilsAzure.execQuery(`
+        SELECT pID
+        FROM Points
+        WHERE pName LIKE '%${pName}%'
+    
+    `);
+    p
+        .then(result=>{
+            res.status(Enums.status_OK).send(result);
+        })
+        .catch(error => {
+            console.log(error.message);
+            res.status(Enums.status_Bad_Request).send(error.message );
+        });
+});
 
 
 /*      Exports     */
