@@ -4,6 +4,11 @@ var express = require('express');
 var router = express.Router();
 
 const DButilsAzure = require('../DButils');
+var Enums = require('../Enum');
+
+
+
+
 var create_tables_qry = DButilsAzure.create_tables_qry;
 
 

@@ -3,6 +3,7 @@
 var express = require('express');
 var router = express.Router();
 var DButilsAzure = require('../DButils');
+var Enums = require('../Enum');
 
 
 
@@ -13,11 +14,11 @@ router.get('/getInterestPoint',(req,res,next)=>{
     p
         .then(result=>{
             console.log(result);
-            res.status(status_OK).send(result);
+            res.status(Enums.status_OK).send(result);
         })
         .catch(error => {
             console.log(error.message);
-            res.status(status_Bad_Request).send(error.message );
+            res.status(Enums.status_Bad_Request).send(error.message );
         });
 });
 
@@ -28,11 +29,11 @@ router.get('/getThreeRandPopularPoints',(req,res,next)=>{
     p
         .then(result=>{
             console.log(result);
-            res.status(status_OK).send(result);
+            res.status(Enums.status_OK).send(result);
         })
         .catch(error => {
             console.log(error.message);
-            res.status(status_Bad_Request).send(error.message );
+            res.status(Enums.status_Bad_Request).send(error.message );
         });
 });
 
@@ -48,10 +49,10 @@ router.get('/getPointsByCategories/', (req,res)=>{
         }
     }
     if (categoris.length > 0){
-        res.status(status_OK).send(categoris)
+        res.status(Enums.status_OK).send(categoris)
     }
     else {
-        res.status(status_Bad_Request).send()
+        res.status(Enums.status_Bad_Request).send()
     }
 });
 
