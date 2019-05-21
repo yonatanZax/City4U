@@ -2,6 +2,7 @@
 // Imports
 var express = require('express');
 var router = express.Router();
+var DButilsAzure = require('../DButils');
 
 
 
@@ -252,26 +253,36 @@ router.post('/addReviewPoint',(req,res,next)=>{
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*      Exports     */
 module.exports = router;
 
 
 
+router.get('/checkIfUserNameExists/:uName',(req,res)=>{
+    var params = req.params;
+    var userName = params.uName;
+    DButilsAzure.execQuery('SELECT * FROM Categories')
+        .then(result=> res.status(status_OK).send(result))
+        .catch(error=>res.status(status_Bad_Request).send(error));
+});
+
+
+
+function checkIfUserNameExists(uName) {
+    const selectQuery = `SELECT uName\n
+        FROM [dbo].[Users]\n
+        WHERE uName = ${uName}`;
+    p = DButilsAzure.execQuery(selectQuery);
+    p
+        .then(result=>{
+            console.log("Check user: " + result);
+            res.status(status_OK).send(result);
+        })
+        .catch(error => {
+            console.log(error.message);
+            res.status(status_Bad_Request).send(error.message );
+        });
+
+    var result = Promise.all([p]);
+    return result;
+}
