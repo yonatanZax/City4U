@@ -3,15 +3,10 @@
 var express = require('express');
 var router = express.Router();
 var DButilsAzure = require('../DButils');
+var Enums = require('../Enum');
 
 
 
-// Final Declarations
-var status_OK = 200 ;
-var status_Created = 201 ;
-var status_Bad_Request = 400 ;
-var status_Unauthorized = 401 ;
-var status_Not_Found = 404 ;
 
 
 
@@ -26,12 +21,12 @@ router.post("/authUser",(req,res)=>{
 
     if(user_db[userName] != null){
         if (user_db[userName].password === password){
-            res.status(200).send('Valid');
+            res.status(Enums.status_OK).send('Valid');
         }else{
-            res.status(400).send('WrongPass')
+            res.status(Enums.status_Bad_Request).send('WrongPass')
         }
     }else{
-        res.status(400).send('NotExists')
+        res.status(Enums.status_Bad_Request).send('NotExists')
     }
 
 
@@ -63,10 +58,10 @@ router.post("/addNewUser",(req,res)=>{
         };
 
     user_db[userName] = newUser;
-    res.status(status_Created).send('Added');
+    res.status(Enums.status_Created).send('Added');
 
   }else{
-    res.status(status_Bad_Request).send('AlreadyExists');
+    res.status(Enums.status_Bad_Request).send('AlreadyExists');
   }
 
 
@@ -80,11 +75,11 @@ router.get('/getUserQuestion/:uName', function(req, res, next) {
   var userName = params.uName;
 
   if(user_db[userName] == null){
-    res.status(status_Bad_Request).send('NotExists');
+    res.status(Enums.status_Bad_Request).send('NotExists');
   }else{
     var user = user_db[userName];
     var question = user.qANDa.question;
-    res.status(status_OK).send(question);
+    res.status(Enums.status_OK).send(question);
   }
 });
 
@@ -103,12 +98,12 @@ router.post("/answerUserQuestion",(req,res)=>{
     var user = user_db[userName];
     var qna = user.qANDa;
     if (qna.answer === answer){
-      res.status(status_OK).send('Correct');
+      res.status(Enums.status_OK).send('Correct');
     }else{
-      res.status(status_Bad_Request).send('Incorrect')
+      res.status(Enums.status_Bad_Request).send('Incorrect')
     }
   }else{
-    res.status(status_Bad_Request).send('NotExists')
+    res.status(Enums.status_Bad_Request).send('NotExists')
   }
 
 
@@ -128,7 +123,7 @@ router.get('/getTwoRelevantPoints',(req,res,next)=>{
         })
         .catch(error => {
             console.log(error.message);
-            res.status(status_Bad_Request).send(error.message );
+            res.status(Enums.status_Bad_Request).send(error.message );
         });
 });
 
@@ -147,10 +142,10 @@ router.get('/getUserTwoSavedPoints/:uName', function(req, res, next) {
     var userName = params.uName;
 
     if(user_db[userName] == null){
-        res.status(status_Bad_Request).send('NotExists');
+        res.status(Enums.status_Bad_Request).send('NotExists');
     }else{
         if(user_savedPoints_db[userName] == null){
-            res.status(status_Bad_Request).send('NoPointsSaved');
+            res.status(Enums.status_Bad_Request).send('NoPointsSaved');
         }else{
             var savedPoints = user_savedPoints_db[userName].savedPoints;
             res.status(status_OK).send([savedPoints[0],savedPoints[1]]);
@@ -177,7 +172,7 @@ router.post('/addPointIDToSavedList',(req,res,next)=>{
         })
         .catch(error => {
             console.log(error.message);
-            res.status(status_Bad_Request).send(error.message );
+            res.status(Enums.status_Bad_Request).send(error.message );
         });
 });
 
@@ -191,13 +186,13 @@ router.get('/getUserAllSavedPoints/:uName', function(req, res, next) {
     var userName = params.uName;
 
     if(user_db[userName] == null){
-        res.status(status_Bad_Request).send('NotExists');
+        res.status(Enums.status_Bad_Request).send('NotExists');
     }else{
         if(user_savedPoints_db[userName] == null){
-            res.status(status_Bad_Request).send('NoPointsSaved');
+            res.status(Enums.status_Bad_Request).send('NoPointsSaved');
         }else{
             var savedPoints = user_savedPoints_db[userName].savedPoints;
-            res.status(status_OK).send(savedPoints);
+            res.status(Enums.status_OK).send(savedPoints);
         }
 
     }
@@ -216,11 +211,11 @@ router.delete('/deleteSavedPoint',(req,res,next)=>{
     p
         .then(result=>{
             console.log(result);
-            res.status(status_OK).send(result);
+            res.status(Enums.status_OK).send(result);
         })
         .catch(error => {
             console.log(error.message);
-            res.status(status_Bad_Request).send(error.message );
+            res.status(Enums.status_Bad_Request).send(error.message );
         });
 });
 
@@ -240,11 +235,11 @@ router.post('/addReviewPoint',(req,res,next)=>{
     p
         .then(result=>{
             console.log(result);
-            res.status(status_OK).send(result);
+            res.status(Enums.status_OK).send(result);
         })
         .catch(error => {
             console.log(error.message);
-            res.status(status_Bad_Request).send(error.message );
+            res.status(Enums.status_Bad_Request).send(error.message );
         });
 });
 
@@ -262,8 +257,8 @@ router.get('/checkIfUserNameExists/:uName',(req,res)=>{
     var params = req.params;
     var userName = params.uName;
     DButilsAzure.execQuery('SELECT * FROM Categories')
-        .then(result=> res.status(status_OK).send(result))
-        .catch(error=>res.status(status_Bad_Request).send(error));
+        .then(result=> res.status(Enums.status_OK).send(result))
+        .catch(error=>res.status(Enums.status_Bad_Request).send(error));
 });
 
 
@@ -276,11 +271,11 @@ function checkIfUserNameExists(uName) {
     p
         .then(result=>{
             console.log("Check user: " + result);
-            res.status(status_OK).send(result);
+            res.status(Enums.status_OK).send(result);
         })
         .catch(error => {
             console.log(error.message);
-            res.status(status_Bad_Request).send(error.message );
+            res.status(Enums.status_Bad_Request).send(error.message );
         });
 
     var result = Promise.all([p]);
