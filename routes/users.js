@@ -63,7 +63,15 @@ router.post("/addNewUser",(req,res)=>{
     // var qna = req.body.qANDa;
     var question = req.body.question;
     var answer = req.body.answer;
+    var cID_list = req.body.cID_list;
 
+    let query = `
+                Insert Into Users_Categories
+                VALUES `;
+    for(let i = 0; i < cID_list.length-1; i++){
+        query += `('${userName}',${cID_list[i]}),\n`
+    }
+    query += `('${userName}',${cID_list[cID_list.length-1]});`;
 
 
     pAuth = DButilsAzure.execQuery(`
@@ -74,12 +82,11 @@ router.post("/addNewUser",(req,res)=>{
     `);
 
     pAuth
-        .then(result => {
-            res.status(Enums.status_OK).send(result);
-        })
+        .then(result => DButilsAzure.execQuery(query))
+        .then(result=> res.status(Enums.status_OK).send('Added'))
         .catch(error => {
             res.status(Enums.status_Bad_Request).send(error.message );
-        })
+        });
 
 
 });
@@ -144,14 +151,34 @@ router.post("/answerUserQuestion",(req,res)=>{
 
 
 // Todo - /getTwoRelevantPoints
-router.get('/getTwoRelevantPoints',(req,res,next)=>{
+router.get('/getTwoRelevantPoints/:uName',(req,res,next)=>{
+    var params = req.params;
+    var userName = params.uName;
+
     p = DButilsAzure.execQuery(`
-    
+        SELECT TOP(2) cID 
+        From Users_Categories
+        WHERE (uName = '${userName}')
+        ORDER BY NEWID();
     `);
     p
         .then(result=>{
+            let query = `
+                SELECT TOP(1) pID
+                FROM Points
+                WHERE (cID = ${result[0].cID})
+                ORDER BY pRank asc ;
+                
+                SELECT TOP(1) pID
+                FROM Points
+                WHERE (cID = ${result[1].cID})
+                ORDER BY pRank asc ;
+            `;
+            return DButilsAzure.execQuery(query);
+        })
+        .then(result=>{
             console.log(result);
-            res.status(Enums.status_OK).send(result);
+            res.status(Enums.status_OK).send([result[0].pID,result[1].pID]);
         })
         .catch(error => {
             console.log(error.message);

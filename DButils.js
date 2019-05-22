@@ -96,7 +96,7 @@ module.exports.create_tables_qry = 'CREATE TABLE Categories (\n' +
     '\tpName\t\tTEXT\tNOT NULL,\n' +
     '\tdetails\t\tTEXT\tNOT NULL,\n' +
     '\tcID\t\t\tINT\t\tNOT NULL FOREIGN KEY REFERENCES Categories(cID)\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
-    '\tpRank\t\tINT\t\t,\n' +
+    '\tpRank\t\tFLOAT\tdefault 3,\n' +
     '\tpicture\t\tIMAGE\t,\n' +
     ');\n' +
     '\n' +

@@ -22,13 +22,21 @@ function createAllTables(){
     return p;
 }
 
-function resetTables(){
+function resetTables(req,res){
     let promises = dropAllTables();
-    Promise.all(promises)
+    p = Promise.all(promises)
         .then(result=> createAllTables())
-        .then(result=> console.log('All tables were reset'))
-        .catch(error=>console.log({my_msg:'something went wrong during the delete',
-            error_msg:error.message}));
+        .then(result=> {
+            console.log('All tables were reset');
+            res.status(Enums.status_OK).send('All tables were reset');
+        })
+        .catch(error=>{
+            console.log({my_msg:'something went wrong during the delete',
+                error_msg:error.message});
+            res.status(Enums.status_OK).send(error);
+
+        });
+    return p;
 }
 
 
@@ -50,7 +58,8 @@ function dropAllTables(){
 }
 
 router.get('/resetTables', function(req,res){
-    resetTables();
+    resetTables(req,res);
+
 });
 
 router.get('/createTables', function(req,res){

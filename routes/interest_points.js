@@ -11,17 +11,20 @@ var Enums = require('../Enum');
 // Todo - /getInterestPoint - OK
 router.get('/getInterestPoint/:pID',(req,res,next)=>{
     var params = req.params;
-    var pointID = params.pID;
+    var pointID = JSON.parse(params.pID);
 
     p = DButilsAzure.execQuery(`
-        SELECT * FROM Points WHERE pID = ${pointID}
+        SELECT * FROM Points WHERE pID IN (${pointID});
     `);
     p
         .then(result=>{
             if (result.length === 0){
+                res.status(Enums.status_Bad_Request).send(result);
+            }
+            else{
                 res.status(Enums.status_OK).send(result);
             }
-            res.status(Enums.status_OK).send(result);
+
         })
         .catch(error => {
             console.log(error.message);
