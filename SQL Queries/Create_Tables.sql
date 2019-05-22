@@ -8,7 +8,7 @@ CREATE TABLE Points(
 	pName		TEXT	NOT NULL,
 	details		TEXT	NOT NULL,
 	cID			INT		NOT NULL FOREIGN KEY REFERENCES Categories(cID)	ON UPDATE CASCADE ON DELETE CASCADE,
-	pRank		INT		default 0,
+	pRank		FLOAT	default 3,
 	picture		IMAGE	,
 );
 

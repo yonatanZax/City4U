@@ -50,8 +50,8 @@ router.get('/getThreeRandPopularPoints',(req,res,next)=>{
 
 
 // Todo - /getPointsByCategories
-router.get('/getPointsByCategories/', (req,res)=>{
-    var categories = req.body.categories;
+router.get('/getPointsByCategories/:categories', (req,res)=>{
+    var categories = req.params.categories;
     categories = JSON.parse(categories);
     console.log(`SELECT pID FROM Categories_Points WHERE (cID in (${categories}));`);
     let p = DButilsAzure.execQuery(`SELECT pID FROM Points WHERE (cID in (${categories}));`);
@@ -70,8 +70,8 @@ router.get('/getPointsByCategories/', (req,res)=>{
 
 
 // Todo - /getPointsByName - OK
-router.get('/getPointsByName/',(req,res,next)=>{
-    var params = req.body;
+router.get('/getPointsByName/:pName',(req,res,next)=>{
+    var params = req.params;
     var pName = params.pName;
 
     p = DButilsAzure.execQuery(`
