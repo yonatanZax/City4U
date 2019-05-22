@@ -11,7 +11,6 @@ var poolConfig = {
     log: true
 };
 
-// TODO: edit this
 var connectionConfig = {
     userName: 'cityadmin',
     password: 'AdminCity0',
@@ -118,20 +117,20 @@ module.exports.create_tables_qry = 'CREATE TABLE Categories (\n' +
     '\tanswer\t\tTEXT\t\tNOT NULL,\n' +
     ');\n' +
     '\n' +
+    'CREATE TABLE Users_Categories (\n' +
+    '    uName\t\tvarchar(20)\t\tFOREIGN KEY REFERENCES Users(uName)\t\t    ON UPDATE CASCADE ON DELETE CASCADE,\n' +
+    '    cID\t\t\tINT\t\t        FOREIGN KEY REFERENCES Categories(cID)\t\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
+    '    PRIMARY KEY(uName, cID)\n' +
+    ');\n' +
+    '\n' +
     'CREATE TABLE Users_Points (\n' +
     '\tuName\t\tvarchar(20)\t\tFOREIGN KEY REFERENCES Users(uName)\t\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
-    '\tpID\t\t\tINT\t\t    FOREIGN KEY REFERENCES Points(pID)\t\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
+    '\tpID\t\t\tINT\t\t        FOREIGN KEY REFERENCES Points(pID)\t\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
+    '\tinsertTime  DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,\n' +
+    '\tsavePosition INT            IDENTITY(1,1)\n' +
     '\tPRIMARY KEY(uName, pID)\n' +
     ');\n' +
     '\n' +
-    '\n' +
-    '\n' +
-    '\n' +
-    '--CREATE TABLE Categories_Points (\n' +
-    '--\tcID\t\t\tINT\t\tFOREIGN KEY REFERENCES Categories(cID)\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
-    '--\tpID\t\t\tINT\t\tFOREIGN KEY REFERENCES Points(pID)\t\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
-    '--\tPRIMARY KEY(cID, pID)\n' +
-    '--);\n' +
     '\n' +
     'CREATE TABLE Reviews (\n' +
     '\tuName\t\tvarchar(20)\tFOREIGN KEY REFERENCES Users(uName)\t\tON UPDATE CASCADE ON DELETE CASCADE,\n' +

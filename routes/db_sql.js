@@ -12,7 +12,7 @@ var create_tables_qry = DButilsAzure.create_tables_qry;
 
 
 
-const tables_names_list = [['Users_Points', 'Reviews'],
+const tables_names_list = [['Users_Points', 'Reviews', 'Users_Categories'],
                             ['Users', 'Points'],
                             [ 'Questions', 'Categories']];
 
