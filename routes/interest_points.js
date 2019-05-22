@@ -50,7 +50,7 @@ router.get('/getThreeRandPopularPoints',(req,res,next)=>{
 router.get('/getPointsByCategories/', (req,res)=>{
     var categories = req.query.categories;
     categories = JSON.parse(categories);
-    console.log(`SELECT pID FROM Categories_Points WHERE (cID in (${categories}));`);
+    console.log(`SELECT pID FROM Categories_Points WHERE (cID in (${caVtegories}));`);
     let p = DButilsAzure.execQuery(`SELECT pID FROM Categories_Points WHERE (cID in (${categories}));`);
     p
         .then(result=>res.status(Enums.status_OK).send(result))

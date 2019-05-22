@@ -4,8 +4,11 @@ var express = require('express');
 var router = express.Router();
 var DButilsAzure = require('../DButils');
 var Enums = require('../Enum');
+const jwt = require("jsonwebtoken");
 
-
+// ***  Secret for the Token    ***
+// Useful site:     https://jwt.io/
+const secret = "ImGroot";
 
 
 
@@ -23,7 +26,7 @@ router.post("/authUser",(req,res)=>{
     p = DButilsAzure.execQuery(`
         SELECT uName 
         FROM Users 
-        WHERE uName = ${userName} AND CONVERT(VARCHAR, pass) = '${password}'
+        WHERE uName = '${userName}' AND CONVERT(VARCHAR, pass) = '${password}'
         `);
     p
         .then(result=>{
@@ -32,9 +35,9 @@ router.post("/authUser",(req,res)=>{
                 options = { expiresIn: "1d" };
                 const token = jwt.sign(payload, secret, options);
                 res.status(Enums.status_OK).send(token);
-        }else{
+            }else{
                 res.status(Enums.status_Bad_Request).send('Invalid' );
-        }
+            }
         })
         .catch(error => {
             console.log(error.message);
@@ -263,7 +266,15 @@ router.delete('/deleteSavedPoint',(req,res,next)=>{
         });
 });
 
-
+function updateRank(pID){
+    // TODO - finish me and add me after delete and insert of review
+    p = DButilsAzure.execQuery(`
+    UPDATE Points
+    SET pRank = (
+    SELECT AVG()
+    )
+    `)
+}
 
 // Todo - /updateSavedPointOrder
 router.put('/updateSavedPointOrder',(req,res,next)=>{
