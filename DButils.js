@@ -87,4 +87,64 @@ exports.execQuery = function (query) {
 
 };
 
+module.exports.create_tables_qry = 'CREATE TABLE Categories (\n' +
+    '\tcID\t\t\tINT\t\tIDENTITY(1,1)\tPRIMARY KEY ,\n' +
+    '\tcName\t\tTEXT\tNOT NULL,\n' +
+    ');\n' +
+    '\n' +
+    'CREATE TABLE Points(\n' +
+    '\tpID\t\t\tINT\t\tIDENTITY(1,1) PRIMARY KEY,\n' +
+    '\tpName\t\tTEXT\tNOT NULL,\n' +
+    '\tdetails\t\tTEXT\tNOT NULL,\n' +
+    '\tcID\t\t\tINT\t\tNOT NULL FOREIGN KEY REFERENCES Categories(cID)\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
+    '\tpRank\t\tINT\t\t,\n' +
+    '\tpicture\t\tIMAGE\t,\n' +
+    ');\n' +
+    '\n' +
+    'CREATE TABLE Questions (\n' +
+    '\tqID\t\t\tINT\t\tIDENTITY(1,1) PRIMARY KEY ,\n' +
+    '\tquestion\tTEXT\tNOT NULL,\n' +
+    ');\n' +
+    '\n' +
+    'CREATE TABLE Users (\n' +
+    '\tuName\t\tvarchar(20)\tNOT NULL PRIMARY KEY ,\n' +
+    '\tpass\t\tTEXT\t\tNOT NULL,\n' +
+    '\tfName\t\tTEXT\t\tNOT NULL,\n' +
+    '\tlName\t\tTEXT\t\tNOT NULL,\n' +
+    '\tcity\t\tTEXT\t\tNOT NULL,\n' +
+    '\tcountry\t\tTEXT\t\tNOT NULL,\n' +
+    '\temail\t\tTEXT\t\tNOT NULL,\n' +
+    '\tquestion\tINT\t\t\tFOREIGN KEY REFERENCES Questions(qID) ON UPDATE CASCADE ON DELETE CASCADE,\n' +
+    '\tanswer\t\tTEXT\t\tNOT NULL,\n' +
+    ');\n' +
+    '\n' +
+    'CREATE TABLE Users_Points (\n' +
+    '\tuName\t\tvarchar(20)\t\tFOREIGN KEY REFERENCES Users(uName)\t\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
+    '\tpID\t\t\tINT\t\t    FOREIGN KEY REFERENCES Points(pID)\t\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
+    '\tPRIMARY KEY(uName, pID)\n' +
+    ');\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '--CREATE TABLE Categories_Points (\n' +
+    '--\tcID\t\t\tINT\t\tFOREIGN KEY REFERENCES Categories(cID)\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
+    '--\tpID\t\t\tINT\t\tFOREIGN KEY REFERENCES Points(pID)\t\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
+    '--\tPRIMARY KEY(cID, pID)\n' +
+    '--);\n' +
+    '\n' +
+    'CREATE TABLE Reviews (\n' +
+    '\tuName\t\tvarchar(20)\tFOREIGN KEY REFERENCES Users(uName)\t\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
+    '\tpID\t\t\tINT\t\t    FOREIGN KEY REFERENCES Points(pID)\t\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
+    '\tcontent\t\tTEXT\t    ,\n' +
+    '\tscore\t\tINT\t\t    NOT NULL,\n' +
+    '\tCONSTRAINT SCORE_CON check (score between 1 and 5),\n' +
+    '\tPRIMARY KEY(uName, pID)\n' +
+    '\n' +
+    ');\n' +
+    '\n' +
+    '\n' +
+    '\n' +
+    '\n';
+
 

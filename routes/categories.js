@@ -7,10 +7,18 @@ var Enums = require('../Enum');
 
 
 
-// Todo - /getCategories
+// Todo - /getCategories - OK
 router.get('/getCategories', function(req,res){
-    console.log('debug');
     DButilsAzure.execQuery('SELECT * FROM Categories')
+        .then(result=> res.status(Enums.status_OK).send(result))
+        .catch(error=>res.status(Enums.status_Bad_Request).send(error));
+});
+
+
+
+// Todo - /getQuestions - OK
+router.get('/getQuestions', function(req,res){
+    DButilsAzure.execQuery('SELECT * FROM Questions')
         .then(result=> res.status(Enums.status_OK).send(result))
         .catch(error=>res.status(Enums.status_Bad_Request).send(error));
 });
@@ -19,19 +27,7 @@ router.get('/getCategories', function(req,res){
 
 
 
-// Todo - /getCategoriesByName
-router.get('/getCategoriesByName',(req,res,next)=>{
-    p = DButilsAzure.execQuery('');
-    p
-        .then(result=>{
-            console.log(result);
-            res.status(Enums.status_OK).send(result);
-        })
-        .catch(error => {
-            console.log(error.message);
-            res.status(Enums.status_Bad_Request).send(error.message );
-        });
-});
+
 
 
 

@@ -7,20 +7,14 @@ const DButilsAzure = require('../DButils');
 var Enums = require('../Enum');
 
 
-
-
 var create_tables_qry = DButilsAzure.create_tables_qry;
 
 
 
-const table_names_with_dep = ['Points', 'Questions', 'Categories'];
-const table_names_without_dep = ['Users_Points', 'Categories_Points', 'Reviews', 'Users'];
 
-
-
-
-
-
+const tables_names_list = [['Users_Points', 'Reviews'],
+                            ['Users', 'Points'],
+                            [ 'Questions', 'Categories']];
 
 
 function createAllTables(){
@@ -34,36 +28,43 @@ function resetTables(){
         .then(result=> createAllTables())
         .then(result=> console.log('All tables were reset'))
         .catch(error=>console.log({my_msg:'something went wrong during the delete',
-            error_msg:error.message}))
-        .finally(()=>createAllTables());
+            error_msg:error.message}));
 }
-
-router.get('/resetTables', function(req,res){
-    resetTables();
-
-});
 
 
 function dropAllTables(){
     var promises = [];
-    for (let i =0; i < table_names_without_dep.length; i++){
-        var name = table_names_without_dep[i];
-        var p = DButilsAzure.execQuery(`DROP TABLE ${name};`);
-        promises.push(p);
+    for (let i = 0; i < tables_names_list.length; i++){
+        var promises = [];
+        for (let j = 0; j < tables_names_list[i].length; j++) {
+            var name = tables_names_list[i][j];
+            var p = DButilsAzure.execQuery(`DROP TABLE ${name};`);
+            promises.push(p);
+        }
+        Promise.all(promises)
+            .then(()=>console.log(`j=${i} passed successfully`))
+            .catch(error=>console.log(`j=${i} FAILED` + error.message));
     }
-    Promise.all(promises)
-        .then(()=>{
-            for (let i =0; i < table_names_with_dep.length; i++){
-                var name = table_names_with_dep[i];
-                var p = DButilsAzure.execQuery(`DROP TABLE ${name};`);
-                promises.push(p);
-            }
-        })
-        .catch(error=>console.log(error.message));
-
 
     return promises;
 }
+
+router.get('/resetTables', function(req,res){
+    resetTables();
+});
+
+router.get('/createTables', function(req,res){
+    p = createAllTables();
+    p
+        .then(()=>{
+            console.log('Tables were Created');
+            res.status(Enums.status_OK).send('Tables created');
+        })
+        .catch(error=>{
+            console.log(('Problem with tables'));
+            res.status(Enums.status_Bad_Request).send('problem with tables\n' + error.message);
+        });
+});
 
 
 /*      Exports     */
