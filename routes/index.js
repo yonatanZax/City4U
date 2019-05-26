@@ -15,7 +15,85 @@ const secret = "ImGroot";
 
 
 
+/*  Post - addNewUser   */
+// Todo - /addNewUser -
+router.post("/addNewUser",(req,res)=>{
 
+    var userName = req.body.uName;
+    var password = req.body.password;
+    var fName = req.body.fName;
+    var lName = req.body.lName;
+    var city = req.body.city;
+    var country = req.body.country;
+    var email = req.body.email;
+    // var interestList = req.body.lName;
+    // var qna = req.body.qANDa;
+    var question = req.body.question;
+    var answer = req.body.answer;
+    var cID_list = req.body.cID_list;
+
+    let query = `
+                Insert Into Users_Categories
+                VALUES `;
+    for(let i = 0; i < cID_list.length-1; i++){
+        query += `('${userName}',${cID_list[i]}),\n`
+    }
+    query += `('${userName}',${cID_list[cID_list.length-1]});`;
+
+
+    pAuth = DButilsAzure.execQuery(`
+    Insert into Users
+        (uName,pass,fName,lName,city,country,email,question,answer)
+    VALUES
+        ('${userName}','${password}','${fName}','${lName}','${city}','${country}','${email}',${question},'${answer}')
+    `);
+
+    pAuth
+        .then(result => DButilsAzure.execQuery(query))
+        .then(result=> res.status(Enums.status_Created).send('Added'))
+        .catch(error => {
+            res.status(Enums.status_Bad_Request).send(error.message );
+        });
+
+
+});
+
+
+
+
+
+
+/*  Post - authUser   */
+// Todo - /authUser - OK
+router.post("/authUser",(req,res)=>{
+
+    var id = 1 | req.body.id;
+    var userName = req.body.uName;
+    var password = req.body.password;
+
+    p = DButilsAzure.execQuery(`
+        SELECT uName 
+        FROM Users 
+        WHERE uName = '${userName}' AND CONVERT(VARCHAR, pass) = '${password}'
+        `);
+    p
+        .then(result=>{
+            if(result.length > 0){
+                payload = { id: id, name: userName, pass: password};
+                options = { expiresIn: "1d" };
+                const token = jwt.sign(payload, secret, options);
+                res.status(Enums.status_OK).send(token);
+            }else{
+                res.status(Enums.status_Bad_Request).send('Invalid' );
+            }
+        })
+        .catch(error => {
+            console.log(error.message);
+            res.status(Enums.status_Bad_Request).send(error.message );
+        });
+
+
+});
 
 
 
@@ -51,7 +129,7 @@ router.post("/verifyTokenExample", (req, res) => {
 // ***  Token - login example   ***
 
 router.post("/getTokenExample", (req, res) => {
-    payload = { id: 1, name: "user1", admin: true };
+    payload = { name: "a", admin: true };
     options = { expiresIn: "1d" };
     const token = jwt.sign(payload, secret, options);
     res.send(token);
