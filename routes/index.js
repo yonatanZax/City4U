@@ -1,6 +1,7 @@
 
 // Imports
 var express = require('express');
+var categories = require('./categories');
 var router = express.Router();
 var DButilsAzure = require('../DButils');
 var Enums = require('../Enum');
@@ -21,16 +22,19 @@ router.post("/addNewUser",(req,res)=>{
 
     var userName = req.body.uName;
     if (userName.match("^[A-z]+$") && (userName.length < 3 || userName.length > 8)){
-        req.status(Enums.status_Bad_Request).send('Invalid values')
+        req.status(Enums.status_Bad_Request).send('Invalid values');
     }
     var password = req.body.password;
     if ( password.match("^[A-z0-9]+$") && (password.length < 5 || password.length > 10)){
-        req.status(Enums.status_Bad_Request).send('Invalid values')
+        req.status(Enums.status_Bad_Request).send('Invalid values');
     }
     var fName = req.body.fName;
     var lName = req.body.lName;
     var city = req.body.city;
     var country = req.body.country;
+    if(! categories.countries.includes(country) ){
+        req.status(Enums.status_Bad_Request).send('Invalid values');
+    }
     var email = req.body.email;
     // var interestList = req.body.lName;
     // var qna = req.body.qANDa;

@@ -72,7 +72,7 @@ app.use('/users', (req, res, next)=>{
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/interest_points', interestPointsRouter);
-app.use('/categories', categoriesRouter);
+app.use('/categories', categoriesRouter.router);
 app.use('/db', dbSqlRouter);
 
 
