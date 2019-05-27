@@ -1,3 +1,5 @@
+
+
 CREATE TABLE Categories (
 	cID			INT		IDENTITY(1,1)	PRIMARY KEY ,
 	cName		TEXT	NOT NULL,
@@ -9,7 +11,7 @@ CREATE TABLE Points(
 	details		TEXT	NOT NULL,
 	cID			INT		NOT NULL FOREIGN KEY REFERENCES Categories(cID)	ON UPDATE CASCADE ON DELETE CASCADE,
 	pRank		FLOAT	default 3,
-	picture		IMAGE	,
+	picture		TEXT	,
 );
 
 CREATE TABLE Questions (
@@ -35,11 +37,12 @@ CREATE TABLE Users_Categories (
     PRIMARY KEY(uName, cID)
 );
 
+
 CREATE TABLE Users_Points (
 	uName		varchar(20)		FOREIGN KEY REFERENCES Users(uName)		ON UPDATE CASCADE ON DELETE CASCADE,
 	pID			INT		        FOREIGN KEY REFERENCES Points(pID)		ON UPDATE CASCADE ON DELETE CASCADE,
 	insertTime  DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	savePosition INT            IDENTITY(1,1)
+	savePosition INT
 	PRIMARY KEY(uName, pID)
 );
 
@@ -53,6 +56,8 @@ CREATE TABLE Reviews (
 	PRIMARY KEY(uName, pID)
 
 );
+
+
 
 
 

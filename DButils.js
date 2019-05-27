@@ -86,7 +86,9 @@ exports.execQuery = function (query) {
 
 };
 
-module.exports.create_tables_qry = 'CREATE TABLE Categories (\n' +
+module.exports.create_tables_qry = '\n' +
+    '\n' +
+    'CREATE TABLE Categories (\n' +
     '\tcID\t\t\tINT\t\tIDENTITY(1,1)\tPRIMARY KEY ,\n' +
     '\tcName\t\tTEXT\tNOT NULL,\n' +
     ');\n' +
@@ -97,7 +99,7 @@ module.exports.create_tables_qry = 'CREATE TABLE Categories (\n' +
     '\tdetails\t\tTEXT\tNOT NULL,\n' +
     '\tcID\t\t\tINT\t\tNOT NULL FOREIGN KEY REFERENCES Categories(cID)\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
     '\tpRank\t\tFLOAT\tdefault 3,\n' +
-    '\tpicture\t\tIMAGE\t,\n' +
+    '\tpicture\t\tTEXT\t,\n' +
     ');\n' +
     '\n' +
     'CREATE TABLE Questions (\n' +
@@ -123,11 +125,12 @@ module.exports.create_tables_qry = 'CREATE TABLE Categories (\n' +
     '    PRIMARY KEY(uName, cID)\n' +
     ');\n' +
     '\n' +
+    '\n' +
     'CREATE TABLE Users_Points (\n' +
     '\tuName\t\tvarchar(20)\t\tFOREIGN KEY REFERENCES Users(uName)\t\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
     '\tpID\t\t\tINT\t\t        FOREIGN KEY REFERENCES Points(pID)\t\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
     '\tinsertTime  DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,\n' +
-    '\tsavePosition INT            IDENTITY(1,1)\n' +
+    '\tsavePosition INT\n' +
     '\tPRIMARY KEY(uName, pID)\n' +
     ');\n' +
     '\n' +
@@ -141,6 +144,8 @@ module.exports.create_tables_qry = 'CREATE TABLE Categories (\n' +
     '\tPRIMARY KEY(uName, pID)\n' +
     '\n' +
     ');\n' +
+    '\n' +
+    '\n' +
     '\n' +
     '\n' +
     '\n' +

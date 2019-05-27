@@ -67,7 +67,6 @@ router.post("/addNewUser",(req,res)=>{
 // Todo - /authUser - OK
 router.post("/authUser",(req,res)=>{
 
-    var id = 1 | req.body.id;
     var userName = req.body.uName;
     var password = req.body.password;
 

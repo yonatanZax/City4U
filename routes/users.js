@@ -257,7 +257,6 @@ router.put('/updateSavedPointOrder',(req,res,next)=>{
 
     DButilsAzure.execQuery( query )
         .then(result=>{
-            console.log(result);
             res.status(Enums.status_OK).send(result);
         })
         .catch(error => {
