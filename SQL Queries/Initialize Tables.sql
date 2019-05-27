@@ -16,10 +16,24 @@ VALUES
 ('b',1),
 ('b',2);
 
+
+insert into Users_Questions
+VALUES
+('a',1,'ans1'),
+('b',1,'ans1'),
+('b',2,'ans2'),
+('a',2,'ans2')
+
+
 insert into Users_Points
 (uName, pID)
 VALUES
 ('a', 10);
+
+insert into Users_Points
+(uName, pID)
+VALUES
+('a', 11);
 
 insert into Reviews
 (uName, pID, content, score)

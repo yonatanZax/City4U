@@ -20,7 +20,13 @@ const secret = "ImGroot";
 router.post("/addNewUser",(req,res)=>{
 
     var userName = req.body.uName;
+    if (userName.length < 3 || userName > 8){
+        req.status(Enums.status_Bad_Request).send('Invalid values')
+    }
     var password = req.body.password;
+    if (password.length < 5 || password > 10){
+        req.status(Enums.status_Bad_Request).send('Invalid values')
+    }
     var fName = req.body.fName;
     var lName = req.body.lName;
     var city = req.body.city;
@@ -28,8 +34,8 @@ router.post("/addNewUser",(req,res)=>{
     var email = req.body.email;
     // var interestList = req.body.lName;
     // var qna = req.body.qANDa;
-    var question = req.body.question;
-    var answer = req.body.answer;
+    var qID_list = req.body.qID_list;
+    var answers = req.body.answers;
     var cID_list = req.body.cID_list;
 
     let query = `
@@ -41,11 +47,20 @@ router.post("/addNewUser",(req,res)=>{
     query += `('${userName}',${cID_list[cID_list.length-1]});`;
 
 
+    query = '\n' + `
+                Insert Into Users_Questions
+                VALUES `;
+    for(let i = 0; i < qID_list.length-1; i++){
+        query += `('${userName}',${qID_list[i]},'${answers[i]}'),\n`
+    }
+    query += `('${userName}',${qID_list[qID_list.length-1]},'${answers[answers.length-1]});`;
+
+
     pAuth = DButilsAzure.execQuery(`
     Insert into Users
         (uName,pass,fName,lName,city,country,email,question,answer)
     VALUES
-        ('${userName}','${password}','${fName}','${lName}','${city}','${country}','${email}',${question},'${answer}')
+        ('${userName}','${password}','${fName}','${lName}','${city}','${country}','${email}')
     `);
 
     pAuth
@@ -78,7 +93,7 @@ router.post("/authUser",(req,res)=>{
     p
         .then(result=>{
             if(result.length > 0){
-                payload = { id: id, name: userName, pass: password};
+                payload = { name: userName, pass: password};
                 options = { expiresIn: "1d" };
                 const token = jwt.sign(payload, secret, options);
                 res.status(Enums.status_OK).send(token);

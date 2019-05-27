@@ -108,8 +108,8 @@ module.exports.create_tables_qry = '\n' +
     ');\n' +
     '\n' +
     'CREATE TABLE Users (\n' +
-    '\tuName\t\tvarchar(20)\tNOT NULL PRIMARY KEY ,\n' +
-    '\tpass\t\tTEXT\t\tNOT NULL,\n' +
+    '\tuName\t\tvarchar(8)\tNOT NULL PRIMARY KEY ,\n' +
+    '\tpass\t\tvarchar(10)\tNOT NULL,\n' +
     '\tfName\t\tTEXT\t\tNOT NULL,\n' +
     '\tlName\t\tTEXT\t\tNOT NULL,\n' +
     '\tcity\t\tTEXT\t\tNOT NULL,\n' +
@@ -120,27 +120,27 @@ module.exports.create_tables_qry = '\n' +
     ');\n' +
     '\n' +
     'CREATE TABLE Users_Categories (\n' +
-    '    uName\t\tvarchar(20)\t\tFOREIGN KEY REFERENCES Users(uName)\t\t    ON UPDATE CASCADE ON DELETE CASCADE,\n' +
+    '    uName\t\tvarchar(8)\t\tFOREIGN KEY REFERENCES Users(uName)\t\t    ON UPDATE CASCADE ON DELETE CASCADE,\n' +
     '    cID\t\t\tINT\t\t        FOREIGN KEY REFERENCES Categories(cID)\t\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
     '    PRIMARY KEY(uName, cID)\n' +
     ');\n' +
     '\n' +
     '\n' +
     'CREATE TABLE Users_Points (\n' +
-    '\tuName\t\tvarchar(20)\t\tFOREIGN KEY REFERENCES Users(uName)\t\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
+    '\tuName\t\tvarchar(8)\t\tFOREIGN KEY REFERENCES Users(uName)\t\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
     '\tpID\t\t\tINT\t\t        FOREIGN KEY REFERENCES Points(pID)\t\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
     '\tinsertTime  DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,\n' +
-    '\tsavePosition INT\n' +
+    '\tsavePosition INT            DEFAULT 0\n' +
     '\tPRIMARY KEY(uName, pID)\n' +
     ');\n' +
     '\n' +
     '\n' +
     'CREATE TABLE Reviews (\n' +
-    '\tuName\t\tvarchar(20)\tFOREIGN KEY REFERENCES Users(uName)\t\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
+    '\tuName\t\tvarchar(8)\tFOREIGN KEY REFERENCES Users(uName)\t\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
     '\tpID\t\t\tINT\t\t    FOREIGN KEY REFERENCES Points(pID)\t\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
     '\tcontent\t\tTEXT\t    ,\n' +
     '\tscore\t\tINT\t\t    NOT NULL,\n' +
-    '\tCONSTRAINT SCORE_CON check (score between 1 and 5),\n' +
+    '\tCONSTRAINT  SCORE_CON   check (score between 1 and 5),\n' +
     '\tPRIMARY KEY(uName, pID)\n' +
     '\n' +
     ');\n' +

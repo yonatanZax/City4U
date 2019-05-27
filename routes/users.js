@@ -11,20 +11,22 @@ var Enums = require('../Enum');
 
 
 /*  Get - getUserQuestion   */
-// Todo - /getUserQuestion - OK
-router.get('/getUserQuestion/:uName', function(req, res, next) {
+// Todo - /getUserQuestions - OK
+router.get('/getUserQuestions/:uName', function(req, res, next) {
   var params = req.params;
   var userName = params.uName;
 
-    p = DButilsAzure.execQuery(`SELECT question FROM Users WHERE uName = '${userName}'`);
+    p = DButilsAzure.execQuery(`
+        SELECT Top(1) qID 
+        FROM Users_Questions 
+        WHERE uName = '${userName}'`);
     p
         .then(result=>{
             if(result.length > 0){
-
                 res.status(Enums.status_OK).send(result);
             }else{
-    res.status(Enums.status_Bad_Request).send('NotExists');
-  }
+                res.status(Enums.status_Bad_Request).send('NotExists');
+            }
         })
         .catch(error => {
             console.log(error.message);
@@ -47,8 +49,8 @@ router.post("/answerUserQuestion",(req,res)=>{
 
     p = DButilsAzure.execQuery(`
         SELECT answer 
-        FROM Users 
-        WHERE uName = '${userName}' AND question = ${question}`);
+        FROM Users_Questions 
+        WHERE uName = '${userName}' AND qID = ${question}`);
     p
         .then(result=>{
             if(result.length === 0){
@@ -136,10 +138,7 @@ router.get('/getUserTwoSavedPoints/:uName', function(req, res, next) {
             res.status(Enums.status_Bad_Request).send(error.message );
         });
 
-
 });
-
-
 
 
 // Todo - /addPointIDToSavedList  - OK
@@ -201,12 +200,12 @@ router.delete('/deleteSavedPoint',(req,res,next)=>{
         WHERE(uName='${userName}' AND pID=${pID});
     `);
     p
-        .then(result=> DButilsAzure.execQuery(`
+        .then(result => DButilsAzure.execQuery(`
             SELECT uName 
             FROM Users_Points 
             WHERE (uName = '${userName}' AND pID = ${pID});
          `))
-        .then(result=>{
+        .then(result =>{
             if(result.length === 0){
                 res.status(Enums.status_OK).send("Deleted");
             }else {
@@ -224,11 +223,11 @@ function updateRank(pID){
     p = DButilsAzure.execQuery(`
     UPDATE Points
     SET pRank = (
-        SELECT AVG(score)
+        SELECT AVG(CAST(score AS DECIMAL(10,2)))
         From Reviews
         WHERE (Reviews.pID = ${pID})
         )
-    WHERE (pID = ${pID})
+    WHERE (Points.pID = ${pID})
     `);
     return p;
 }
@@ -242,14 +241,9 @@ router.put('/updateSavedPointOrder',(req,res,next)=>{
 
     for( let i = 0 ; i < orderedPoints.length ; i++){
         query += `
-            Delete
-            FROM Users_Points
-            WHERE (uName = '${userName}' AND pID = ${orderedPoints[i]});
-            \n
-            INSERT INTO Users_Points
-            VALUES ('${userName}',${orderedPoints[i]});
-            \n
-        
+            UPDATE Users_Points
+            set savePosition = ${i+1}
+            WHERE (Users_Points.uName = '${userName}' AND Users_Points.pID = ${orderedPoints[i]});        
         `;
     }
     console.log(query);
@@ -284,12 +278,9 @@ router.get('/getPointsByName/:pName',(req,res,next)=>{
         })
         .catch(error => {
             console.log(error.message);
-            res.status(Enums.status_Bad_Request).send(error.message );
+            res.status(Enums.status_Bad_Request).send(error.message);
         });
 });
-
-
-
 
 
 // Todo - /addReviewPoint - OK
@@ -314,9 +305,6 @@ router.post('/addReviewPoint',(req,res,next)=>{
             res.status(Enums.status_Bad_Request).send(error.message );
         });
 });
-
-
-
 
 
 
