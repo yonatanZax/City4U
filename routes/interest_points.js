@@ -9,12 +9,14 @@ var Enums = require('../Enum');
 
 
 // Todo - /getInterestPoint - OK
-router.get('/getInterestPoint/:pID',(req,res,next)=>{
+router.get('/getInterestPoints/:pID_list',(req,res,next)=>{
     var params = req.params;
-    var pointID = JSON.parse(params.pID);
+    var pointID = JSON.parse(params.pID_list);
 
     p = DButilsAzure.execQuery(`
-        SELECT * FROM Points WHERE pID IN (${pointID});
+        SELECT * 
+        FROM Points 
+        WHERE pID IN (${pointID});
     `);
     p
         .then(result=>{
@@ -62,13 +64,7 @@ router.get('/getPointsByCategories/:categories', (req,res)=>{
         .then(result=>res.status(Enums.status_OK).send(result))
         .catch(error=>res.status(Enums.status_Not_Found).send(error));
 
-    // if (categoris.length > 0){
-    //     res.status(Enums.status_OK).send(categoris)
-    // }
-    // else {
-    //     res.status(Enums.status_Bad_Request).send()
-    // }
-});
+    });
 
 
 

@@ -153,6 +153,8 @@ router.post('/addPointIDToSavedList',(req,res,next)=>{
         .then(result=>{
             if( result.length === 0){
                 res.status(Enums.status_Created).send("Added");
+            }else{
+                res.status(Enums.status_Bad_Request).send('NotAdded' );
             }
         })
         .catch(error => {
@@ -173,7 +175,8 @@ router.get('/getUserAllSavedPoints/:uName', function(req, res, next) {
     p = DButilsAzure.execQuery(`
         SELECT pID 
         FROM Users_Points 
-        WHERE (uName = '${userName}');
+        WHERE (uName = '${userName}')
+        ORDER by savePosition
     `);
     p
         .then(result=>{
@@ -209,7 +212,7 @@ router.delete('/deleteSavedPoint',(req,res,next)=>{
             if(result.length === 0){
                 res.status(Enums.status_OK).send("Deleted");
             }else {
-                res.status(Enums.status_Bad_Request).send(result);
+                res.status(Enums.status_Bad_Request).send("NotDeleted");
             }
         })
         .catch(error => {
@@ -251,7 +254,12 @@ router.put('/updateSavedPointOrder',(req,res,next)=>{
 
     DButilsAzure.execQuery( query )
         .then(result=>{
-            res.status(Enums.status_OK).send(result);
+            if ( result.length === 0 ){
+                res.status(Enums.status_OK).send("Updated");
+            }else{
+                res.status(Enums.status_OK).send("NotUpdated");
+            }
+
         })
         .catch(error => {
             console.log(error.message);
