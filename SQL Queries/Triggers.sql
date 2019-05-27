@@ -2,9 +2,12 @@ CREATE or alter TRIGGER insertUserPoints
     on Users_Points
     AFTER INSERT
     as BEGIN
-    UPDATE Users_Points set savePosition = 1 + (select max(Users_Points.savePosition)
+    UPDATE Users_Points
+    set savePosition = 1 + (select max(Users_Points.savePosition)
                                             FROM Users_Points, inserted
-                                            WHERE (Users_Points.uName = inserted.uName AND Users_Points.pID = inserted.pID));
+                                            WHERE (Users_Points.uName = inserted.uName))
+    FROM Users_Points, inserted
+    WHERE (Users_Points.uName = inserted.uName AND Users_Points.pID = inserted.pID);
 end
 
 

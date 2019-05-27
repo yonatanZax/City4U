@@ -21,6 +21,11 @@ insert into Users_Points
 VALUES
 ('a', 10);
 
+insert into Users_Points
+(uName, pID)
+VALUES
+('a', 11);
+
 insert into Reviews
 (uName, pID, content, score)
 VALUES
