@@ -5,5 +5,7 @@
     <file url="file://$PROJECT_DIR$/SQL Queries/AddPoints.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/SQL Queries/Create_Tables.sql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/SQL Queries/Initialize Tables.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/SQL Queries/Triggers.sql" dialect="TSQL" />
+    <file url="PROJECT" dialect="TSQL" />
   </component>
 </project>

@@ -34,7 +34,26 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
+//middleware
+// app.use('/users', (req, res, next)=>{
+//     const bearerHeader = req.headers['x-auth-token'];
+//     if(typeof bearerHeader !== 'undefined'){
+//         req.token = bearerHeader.split(' ')[0];
+//         jwt.verify(req.token,secret,(err, authData)=>{
+//             if(err){
+//                 res.status(403).json({location: "TokenVerify", message: err.message});
+//             }
+//             else{
+//                 req.userName = authData['username'];
+//             }
+//         });
+//         next();
+//     }
+//     else{
+//         res.status(403).send( "Analysis: Un Authorized Token.");
+//         next();
+//     }
+// });
 
 // ***  Routers use    ***
 
