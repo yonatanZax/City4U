@@ -25,6 +25,18 @@ router.get('/getQuestions', function(req,res){
 
 
 
+function readCountries(){
+    var oXHR = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+
+    oXHR.open("GET", "../countries.xml", true);      // true = ASYNCHRONOUS REQUEST (DESIRABLE), false = SYNCHRONOUS REQUEST.
+    oXHR.send();
+
+}
+
+
+
+
+
 
 
 

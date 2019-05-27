@@ -20,11 +20,11 @@ const secret = "ImGroot";
 router.post("/addNewUser",(req,res)=>{
 
     var userName = req.body.uName;
-    if (userName.length < 3 || userName > 8){
+    if (userName.match("^[A-z]+$") && (userName.length < 3 || userName.length > 8)){
         req.status(Enums.status_Bad_Request).send('Invalid values')
     }
     var password = req.body.password;
-    if (password.length < 5 || password > 10){
+    if ( password.match("^[A-z0-9]+$") && (password.length < 5 || password.length > 10)){
         req.status(Enums.status_Bad_Request).send('Invalid values')
     }
     var fName = req.body.fName;
@@ -35,7 +35,15 @@ router.post("/addNewUser",(req,res)=>{
     // var interestList = req.body.lName;
     // var qna = req.body.qANDa;
     var qID_list = req.body.qID_list;
+    if ( qID_list.length < 2 ){
+        req.status(Enums.status_Bad_Request).send('Invalid values');
+    }
+
     var answers = req.body.answers;
+    if( answers.length !== qID_list.length){
+        req.status(Enums.status_Bad_Request).send('Invalid values');
+    }
+
     var cID_list = req.body.cID_list;
 
     let query = `
