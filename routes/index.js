@@ -1,6 +1,7 @@
 
 // Imports
 var express = require('express');
+var categories = require('./categories');
 var router = express.Router();
 var DButilsAzure = require('../DButils');
 var Enums = require('../Enum');
@@ -20,16 +21,33 @@ const secret = "ImGroot";
 router.post("/addNewUser",(req,res)=>{
 
     var userName = req.body.uName;
+    if (userName.match("^[A-z]+$") && (userName.length < 3 || userName.length > 8)){
+        req.status(Enums.status_Bad_Request).send('Invalid values');
+    }
     var password = req.body.password;
+    if ( password.match("^[A-z0-9]+$") && (password.length < 5 || password.length > 10)){
+        req.status(Enums.status_Bad_Request).send('Invalid values');
+    }
     var fName = req.body.fName;
     var lName = req.body.lName;
     var city = req.body.city;
     var country = req.body.country;
+    if(! categories.countries.includes(country) ){
+        req.status(Enums.status_Bad_Request).send('Invalid values');
+    }
     var email = req.body.email;
     // var interestList = req.body.lName;
     // var qna = req.body.qANDa;
-    var question = req.body.question;
-    var answer = req.body.answer;
+    var qID_list = req.body.qID_list;
+    if ( qID_list.length < 2 ){
+        req.status(Enums.status_Bad_Request).send('Invalid values');
+    }
+
+    var answers = req.body.answers;
+    if( answers.length !== qID_list.length){
+        req.status(Enums.status_Bad_Request).send('Invalid values');
+    }
+
     var cID_list = req.body.cID_list;
 
     let query = `
@@ -41,11 +59,20 @@ router.post("/addNewUser",(req,res)=>{
     query += `('${userName}',${cID_list[cID_list.length-1]});`;
 
 
+    query += '\n' + `
+                Insert Into Users_Questions
+                VALUES `;
+    for(let i = 0; i < qID_list.length-1; i++){
+        query += `('${userName}',${qID_list[i]},'${answers[i]}'),\n`
+    }
+    query += `('${userName}',${qID_list[qID_list.length-1]},'${answers[answers.length-1]}');`;
+
+
     pAuth = DButilsAzure.execQuery(`
     Insert into Users
-        (uName,pass,fName,lName,city,country,email,question,answer)
+        (uName,pass,fName,lName,city,country,email)
     VALUES
-        ('${userName}','${password}','${fName}','${lName}','${city}','${country}','${email}',${question},'${answer}')
+        ('${userName}','${password}','${fName}','${lName}','${city}','${country}','${email}')
     `);
 
     pAuth

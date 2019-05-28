@@ -11,16 +11,18 @@ var Enums = require('../Enum');
 
 
 /*  Get - getUserQuestion   */
-// Todo - /getUserQuestion - OK
-router.get('/getUserQuestion/:uName', function(req, res, next) {
+// Todo - /getUserQuestions - OK
+router.get('/getUserQuestions/:uName', function(req, res, next) {
   var params = req.params;
   var userName = params.uName;
 
-    p = DButilsAzure.execQuery(`SELECT question FROM Users WHERE uName = '${userName}'`);
+    p = DButilsAzure.execQuery(`
+        SELECT Top(1) qID 
+        FROM Users_Questions 
+        WHERE uName = '${userName}'`);
     p
         .then(result=>{
             if(result.length > 0){
-
                 res.status(Enums.status_OK).send(result);
             }else{
     res.status(Enums.status_Bad_Request).send('NotExists');
@@ -47,8 +49,8 @@ router.post("/answerUserQuestion",(req,res)=>{
 
     p = DButilsAzure.execQuery(`
         SELECT answer 
-        FROM Users 
-        WHERE uName = '${userName}' AND question = ${question}`);
+        FROM Users_Questions 
+        WHERE uName = '${userName}' AND qID = ${question}`);
     p
         .then(result=>{
             if(result.length === 0){
@@ -80,8 +82,9 @@ router.get('/getTwoRelevantPoints/:uName',(req,res,next)=>{
         ORDER BY NEWID();
     `);
     p
-        .then(result=>{
-            let query = `
+        .then(result => {
+            if(result.length === 2) {
+                let query = `
                 SELECT TOP(1) pID
                 FROM Points
                 WHERE (cID = ${result[0].cID})
@@ -92,7 +95,11 @@ router.get('/getTwoRelevantPoints/:uName',(req,res,next)=>{
                 WHERE (cID = ${result[1].cID})
                 ORDER BY pRank asc ;
             `;
-            return DButilsAzure.execQuery(query);
+                return DButilsAzure.execQuery(query);
+            }
+            else{
+                throw new Error('Bad user name');
+            }
         })
         .then(result=>{
             console.log(result);
@@ -151,6 +158,8 @@ router.post('/addPointIDToSavedList',(req,res,next)=>{
         .then(result=>{
             if( result.length === 0){
                 res.status(Enums.status_Created).send("Added");
+            }else{
+                res.status(Enums.status_Bad_Request).send('NotAdded' );
             }
         })
         .catch(error => {
@@ -171,7 +180,8 @@ router.get('/getUserAllSavedPoints/:uName', function(req, res, next) {
     p = DButilsAzure.execQuery(`
         SELECT pID 
         FROM Users_Points 
-        WHERE (uName = '${userName}');
+        WHERE (uName = '${userName}')
+        ORDER by savePosition
     `);
     p
         .then(result=>{
@@ -207,7 +217,7 @@ router.delete('/deleteSavedPoint',(req,res,next)=>{
             if(result.length === 0){
                 res.status(Enums.status_OK).send("Deleted");
             }else {
-                res.status(Enums.status_Bad_Request).send(result);
+                res.status(Enums.status_Bad_Request).send("NotDeleted");
             }
         })
         .catch(error => {
@@ -249,7 +259,12 @@ router.put('/updateSavedPointOrder',(req,res,next)=>{
 
     DButilsAzure.execQuery( query )
         .then(result=>{
-            res.status(Enums.status_OK).send(result);
+            if ( result.length === 0 ){
+                res.status(Enums.status_OK).send("Updated");
+            }else{
+                res.status(Enums.status_OK).send("NotUpdated");
+            }
+
         })
         .catch(error => {
             console.log(error.message);
