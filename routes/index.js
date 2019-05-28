@@ -59,18 +59,18 @@ router.post("/addNewUser",(req,res)=>{
     query += `('${userName}',${cID_list[cID_list.length-1]});`;
 
 
-    query = '\n' + `
+    query += '\n' + `
                 Insert Into Users_Questions
                 VALUES `;
     for(let i = 0; i < qID_list.length-1; i++){
         query += `('${userName}',${qID_list[i]},'${answers[i]}'),\n`
     }
-    query += `('${userName}',${qID_list[qID_list.length-1]},'${answers[answers.length-1]});`;
+    query += `('${userName}',${qID_list[qID_list.length-1]},'${answers[answers.length-1]}');`;
 
 
     pAuth = DButilsAzure.execQuery(`
     Insert into Users
-        (uName,pass,fName,lName,city,country,email,question,answer)
+        (uName,pass,fName,lName,city,country,email)
     VALUES
         ('${userName}','${password}','${fName}','${lName}','${city}','${country}','${email}')
     `);

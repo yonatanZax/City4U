@@ -82,8 +82,9 @@ router.get('/getTwoRelevantPoints/:uName',(req,res,next)=>{
         ORDER BY NEWID();
     `);
     p
-        .then(result=>{
-            let query = `
+        .then(result => {
+            if(result.length === 2) {
+                let query = `
                 SELECT TOP(1) pID
                 FROM Points
                 WHERE (cID = ${result[0].cID})
@@ -94,7 +95,11 @@ router.get('/getTwoRelevantPoints/:uName',(req,res,next)=>{
                 WHERE (cID = ${result[1].cID})
                 ORDER BY pRank asc ;
             `;
-            return DButilsAzure.execQuery(query);
+                return DButilsAzure.execQuery(query);
+            }
+            else{
+                throw new Error('Bad user name');
+            }
         })
         .then(result=>{
             console.log(result);
@@ -306,8 +311,8 @@ router.post('/addReviewPoint',(req,res,next)=>{
              ('${userName}',${pID},'${content}',${score})`
         );
     p
-        .then(result=>updateRank(pID))
-        .then(result=> res.status(Enums.status_OK).send(result))
+        .then(result=> updateRank(pID))
+        .then(result=> res.status(Enums.status_Created).send(result))
         .catch(error => {
             console.log(error.message);
             res.status(Enums.status_Bad_Request).send(error.message );

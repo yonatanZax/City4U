@@ -2,12 +2,14 @@ insert into Questions
 (question)
 values
 ('What is your dogs name?'),
-('What is your favorite movie?');
+('What is your favorite movie?'),
+('What is your favorite color?'),
+('In what city were you born?');
 
 insert into Users
 VALUES
-    ('a','a','a','a','a','a','a',1,'a'),
-    ('b','b','b','b','b','b','b',2,'b');
+    ('a','a','a','a','a','a','a'),
+    ('b','b','b','b','b','b','b');
 
 insert into Users_Categories
 VALUES
@@ -16,13 +18,12 @@ VALUES
 ('b',1),
 ('b',2);
 
-
 insert into Users_Questions
 VALUES
-('a',1,'ans1'),
-('b',1,'ans1'),
-('b',2,'ans2'),
-('a',2,'ans2')
+('a',1, 'answer'),
+('a',2, 'answer'),
+('b',1, 'answer'),
+('b',2, 'answer');
 
 
 insert into Users_Points
@@ -38,5 +39,5 @@ VALUES
 insert into Reviews
 (uName, pID, content, score)
 VALUES
-('a', 10, 'I am Groot', 4),
+('a', 10, 'I am Groot', 3),
 ('b', 10, 'I am Groot', 3);

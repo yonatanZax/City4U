@@ -14,6 +14,8 @@
     "morgan": "~1.9.1",
     "nodemon": "^1.19.0",
     "pug": "2.0.0-beta11",
+    "tedious": "^6.1.1",
+    "tedious-connection-pool": "^1.0.5",
     "xml-js": "^1.6.11"
   }
 }

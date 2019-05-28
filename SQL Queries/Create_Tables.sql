@@ -27,8 +27,6 @@ CREATE TABLE Users (
 	city		TEXT		NOT NULL,
 	country		TEXT		NOT NULL,
 	email		TEXT		NOT NULL,
-	question	INT			FOREIGN KEY REFERENCES Questions(qID) ON UPDATE CASCADE ON DELETE CASCADE,
-	answer		TEXT		NOT NULL,
 );
 
 CREATE TABLE Users_Categories (
@@ -37,12 +35,11 @@ CREATE TABLE Users_Categories (
     PRIMARY KEY(uName, cID)
 );
 
-
 CREATE TABLE Users_Questions (
-                                  uName		varchar(8)		FOREIGN KEY REFERENCES Users(uName)		    ON UPDATE CASCADE ON DELETE CASCADE,
-                                  qID		INT		        FOREIGN KEY REFERENCES Questions(qID)		ON UPDATE CASCADE ON DELETE CASCADE,
-                                  answer    TEXT
-                                  PRIMARY KEY(uName, qID)
+    uName		varchar(8)		FOREIGN KEY REFERENCES Users(uName)		    ON UPDATE CASCADE ON DELETE CASCADE,
+    qID     	INT			    FOREIGN KEY REFERENCES Questions(qID)       ON UPDATE CASCADE ON DELETE CASCADE,
+    answer		TEXT		    NOT NULL
+    PRIMARY KEY(uName, qID)
 );
 
 

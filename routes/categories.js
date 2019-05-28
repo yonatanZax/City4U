@@ -20,7 +20,7 @@ router.get('/getCategories', function(req,res){
 router.get('/getQuestions', function(req,res){
     DButilsAzure.execQuery('SELECT * FROM Questions')
         .then(result=> res.status(Enums.status_OK).send(result))
-        .catch(error=>res.status(Enums.status_Bad_Request).send(error));
+        .catch(error=> res.status(Enums.status_Bad_Request).send(error));
 });
 
 

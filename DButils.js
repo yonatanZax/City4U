@@ -115,14 +115,19 @@ module.exports.create_tables_qry = '\n' +
     '\tcity\t\tTEXT\t\tNOT NULL,\n' +
     '\tcountry\t\tTEXT\t\tNOT NULL,\n' +
     '\temail\t\tTEXT\t\tNOT NULL,\n' +
-    '\tquestion\tINT\t\t\tFOREIGN KEY REFERENCES Questions(qID) ON UPDATE CASCADE ON DELETE CASCADE,\n' +
-    '\tanswer\t\tTEXT\t\tNOT NULL,\n' +
     ');\n' +
     '\n' +
     'CREATE TABLE Users_Categories (\n' +
     '    uName\t\tvarchar(8)\t\tFOREIGN KEY REFERENCES Users(uName)\t\t    ON UPDATE CASCADE ON DELETE CASCADE,\n' +
     '    cID\t\t\tINT\t\t        FOREIGN KEY REFERENCES Categories(cID)\t\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
     '    PRIMARY KEY(uName, cID)\n' +
+    ');\n' +
+    '\n' +
+    'CREATE TABLE Users_Questions (\n' +
+    '    uName\t\tvarchar(8)\t\tFOREIGN KEY REFERENCES Users(uName)\t\t    ON UPDATE CASCADE ON DELETE CASCADE,\n' +
+    '    qID     \tINT\t\t\t    FOREIGN KEY REFERENCES Questions(qID)       ON UPDATE CASCADE ON DELETE CASCADE,\n' +
+    '    answer\t\tTEXT\t\t    NOT NULL\n' +
+    '    PRIMARY KEY(uName, qID)\n' +
     ');\n' +
     '\n' +
     '\n' +
