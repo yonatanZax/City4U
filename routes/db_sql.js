@@ -9,10 +9,7 @@ var Enums = require('../Enum');
 
 var create_tables_qry = DButilsAzure.create_tables_qry;
 
-
-
-
-const tables_names_list = [['Users_Points', 'Reviews', 'Users_Categories'],
+const tables_names_list = [['Users_Points', 'Reviews', 'Users_Categories','Users_Questions'],
                             ['Users', 'Points'],
                             [ 'Questions', 'Categories']];
 
