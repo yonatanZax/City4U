@@ -26,6 +26,13 @@ var dbSqlRouter = require('./routes/db_sql');
 
 var app = express();
 
+// This is a middleware that will fix your issue for any request
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-auth-token");
+    next();
+});
+
 // run server
 const port = process.env.PORT || 3000; //environment variable
 app.listen(port, () => {
