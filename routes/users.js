@@ -280,7 +280,7 @@ router.get('/getPointsByName/:pName',(req,res,next)=>{
     var pName = params.pName;
 
     p = DButilsAzure.execQuery(`
-        SELECT pID
+        SELECT *
         FROM Points
         WHERE (pName LIKE '%${pName}%');
     
@@ -318,6 +318,7 @@ router.post('/addReviewPoint',(req,res,next)=>{
             res.status(Enums.status_Bad_Request).send(error.message );
         });
 });
+
 
 
 

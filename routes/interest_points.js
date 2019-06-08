@@ -41,7 +41,7 @@ router.get('/getInterestPoints/:pID_list',(req,res,next)=>{
 // Todo - /getThreeRandPopularPoints - OK
 router.get('/getThreeRandPopularPoints',(req,res,next)=>{
     p = DButilsAzure.execQuery(`
-        SELECT TOP(3) pID
+        SELECT TOP(3) *
         FROM Points
         ORDER BY NEWID()
     `);
