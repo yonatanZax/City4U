@@ -6,12 +6,13 @@ CREATE TABLE Categories (
 );
 
 CREATE TABLE Points(
-	pID			INT		IDENTITY(1,1) PRIMARY KEY,
-	pName		TEXT	NOT NULL,
-	details		TEXT	NOT NULL,
-	cID			INT		NOT NULL FOREIGN KEY REFERENCES Categories(cID)	ON UPDATE CASCADE ON DELETE CASCADE,
-	pRank		FLOAT	default 3,
-	picture		TEXT	,
+	pID			    INT		IDENTITY(1,1) PRIMARY KEY,
+	pName		    TEXT	NOT NULL,
+	details		    TEXT	NOT NULL,
+	cID			    INT		NOT NULL FOREIGN KEY REFERENCES Categories(cID)	ON UPDATE CASCADE ON DELETE CASCADE,
+	pRank		    FLOAT	default 3,
+	picture		    TEXT	,
+	viewed_counter  int     default 0
 );
 
 CREATE TABLE Questions (
@@ -57,9 +58,9 @@ CREATE TABLE Reviews (
 	pID			INT		    FOREIGN KEY REFERENCES Points(pID)		ON UPDATE CASCADE ON DELETE CASCADE,
 	content		TEXT	    ,
 	score		INT		    NOT NULL,
+	time_stamp  DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT  SCORE_CON   check (score between 1 and 5),
 	PRIMARY KEY(uName, pID)
-
 );
 
 

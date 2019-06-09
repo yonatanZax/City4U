@@ -72,7 +72,7 @@ router.get('/getPointsByCategories/:categories', (req,res)=>{
         res.status(Enums.status_Bad_Request).send('Params should be a list of INT bigger than 0');
     }
 
-    });
+});
 
 
 

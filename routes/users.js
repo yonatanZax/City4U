@@ -11,15 +11,20 @@ var Enums = require('../Enum');
 
 
 /*  Get - getUserQuestion   */
-// Todo - /getUserQuestions - OK
-router.get('/getUserQuestions/:uName', function(req, res, next) {
+// Todo - /getUserQuestion - OK
+router.get('/getUserQuestion/:uName', function(req, res, next) {
   var params = req.params;
   var userName = params.uName;
 
     p = DButilsAzure.execQuery(`
-        SELECT Top(1) qID 
-        FROM Users_Questions 
-        WHERE uName = '${userName}'`);
+        SELECT qID,question
+        FROM Questions
+        WHERE qID = (
+                    SELECT Top(1) qID 
+                    FROM Users_Questions 
+                    WHERE uName = '${userName}')
+        `);
+
     p
         .then(result=>{
             if(result.length > 0){
@@ -54,11 +59,11 @@ router.post("/answerUserQuestion",(req,res)=>{
     p
         .then(result=>{
             if(result.length === 0){
-                res.status(Enums.status_Bad_Request).send('NotExists');
+                res.status(Enums.status_OK).send('NotExists');
             }else if(result[0].answer === answer){
                 res.status(Enums.status_OK).send('Correct');
             }else{
-                res.status(Enums.status_Bad_Request).send('Incorrect');
+                res.status(Enums.status_OK).send('Incorrect');
             }
         })
         .catch(error => {

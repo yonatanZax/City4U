@@ -26,17 +26,18 @@ var dbSqlRouter = require('./routes/db_sql');
 
 var app = express();
 
-// This is a middleware that will fix your issue for any request
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-auth-token");
-    next();
-});
+
 
 // run server
 const port = process.env.PORT || 3000; //environment variable
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
+});
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-auth-token");
+    next();
 });
 
 // view engine setup
@@ -53,25 +54,25 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 //middleware
-app.use('/users', (req, res, next)=>{
-    const bearerHeader = req.headers['x-auth-token'];
-    if(typeof bearerHeader !== 'undefined'){
-        req.token = bearerHeader.split(' ')[0];
-
-        jwt.verify(req.token,secret,(err, authData)=>{
-            if(err){
-                res.status(Enums.status_Forbidden).json({location: "TokenVerify", message: err.message});
-            }
-            else{
-                req.userName = authData['username'];
-                next();
-            }
-        });
-    }
-    else{
-        res.status(Enums.status_Bad_Request).send( "Auth: Un Authorized Token.");
-    }
-});
+// app.use('/users', (req, res, next)=>{
+//     const bearerHeader = req.headers['x-auth-token'];
+//     if(typeof bearerHeader !== 'undefined'){
+//         req.token = bearerHeader.split(' ')[0];
+//
+//         jwt.verify(req.token,secret,(err, authData)=>{
+//             if(err){
+//                 res.status(Enums.status_Forbidden).json({location: "TokenVerify", message: err.message});
+//             }
+//             else{
+//                 req.userName = authData['username'];
+//                 next();
+//             }
+//         });
+//     }
+//     else{
+//         res.status(Enums.status_Bad_Request).send( "Auth: Un Authorized Token.");
+//     }
+// });
 
 
 // ***  Routers use    ***

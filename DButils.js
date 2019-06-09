@@ -94,12 +94,13 @@ module.exports.create_tables_qry = '\n' +
     ');\n' +
     '\n' +
     'CREATE TABLE Points(\n' +
-    '\tpID\t\t\tINT\t\tIDENTITY(1,1) PRIMARY KEY,\n' +
-    '\tpName\t\tTEXT\tNOT NULL,\n' +
-    '\tdetails\t\tTEXT\tNOT NULL,\n' +
-    '\tcID\t\t\tINT\t\tNOT NULL FOREIGN KEY REFERENCES Categories(cID)\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
-    '\tpRank\t\tFLOAT\tdefault 3,\n' +
-    '\tpicture\t\tTEXT\t,\n' +
+    '\tpID\t\t\t    INT\t\tIDENTITY(1,1) PRIMARY KEY,\n' +
+    '\tpName\t\t    TEXT\tNOT NULL,\n' +
+    '\tdetails\t\t    TEXT\tNOT NULL,\n' +
+    '\tcID\t\t\t    INT\t\tNOT NULL FOREIGN KEY REFERENCES Categories(cID)\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
+    '\tpRank\t\t    FLOAT\tdefault 3,\n' +
+    '\tpicture\t\t    TEXT\t,\n' +
+    '\tviewed_counter  int     default 0\n' +
     ');\n' +
     '\n' +
     'CREATE TABLE Questions (\n' +
