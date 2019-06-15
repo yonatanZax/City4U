@@ -56,7 +56,7 @@ CREATE TABLE Users_Points (
 CREATE TABLE Reviews (
 	uName		varchar(8)	FOREIGN KEY REFERENCES Users(uName)		ON UPDATE CASCADE ON DELETE CASCADE,
 	pID			INT		    FOREIGN KEY REFERENCES Points(pID)		ON UPDATE CASCADE ON DELETE CASCADE,
-	content		TEXT	    ,
+	content		TEXT	    NOT NULL ,
 	score		INT		    NOT NULL,
 	time_stamp  DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT  SCORE_CON   check (score between 1 and 5),

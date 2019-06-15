@@ -11,15 +11,22 @@ var Enums = require('../Enum');
 
 
 /*  Get - getUserQuestion   */
-// Todo - /getUserQuestions - OK
-router.get('/getUserQuestions/:uName', function(req, res, next) {
+// Todo - /getUserQuestion - OK
+router.get('/getUserQuestion/:uName', function(req, res, next) {
   var params = req.params;
   var userName = params.uName;
 
     p = DButilsAzure.execQuery(`
-        SELECT Top(1) qID 
-        FROM Users_Questions 
-        WHERE uName = '${userName}'`);
+        SELECT qID,question
+        FROM Questions
+        WHERE qID = (
+            SELECT Top(1) qID 
+            FROM Users_Questions 
+            WHERE uName = '${userName}'
+            ORDER BY NEWID()
+        );
+        `);
+
     p
         .then(result=>{
             if(result.length > 0){
@@ -54,11 +61,11 @@ router.post("/answerUserQuestion",(req,res)=>{
     p
         .then(result=>{
             if(result.length === 0){
-                res.status(Enums.status_Bad_Request).send('NotExists');
+                res.status(Enums.status_OK).send('NotExists');
             }else if(result[0].answer === answer){
                 res.status(Enums.status_OK).send('Correct');
             }else{
-                res.status(Enums.status_Bad_Request).send('Incorrect');
+                res.status(Enums.status_OK).send('Incorrect');
             }
         })
         .catch(error => {
@@ -178,10 +185,10 @@ router.get('/getUserAllSavedPoints/:uName', function(req, res, next) {
     var userName = params.uName;
 
     p = DButilsAzure.execQuery(`
-        SELECT pID 
-        FROM Users_Points 
-        WHERE (uName = '${userName}')
-        ORDER by savePosition
+            SELECT pID 
+            FROM Users_Points 
+            WHERE (uName = '${userName}')
+            ORDER by savePosition;
     `);
     p
         .then(result=>{
@@ -198,7 +205,7 @@ router.get('/getUserAllSavedPoints/:uName', function(req, res, next) {
 
 
 // Todo - /deleteSavedPoint - OK
-router.delete('/deleteSavedPoint',(req,res,next)=>{
+router.post('/deleteSavedPoint',(req,res,next)=>{
     var userName = req.body.uName;
     var pID = req.body.pID;
     console.log(`UserName: ${userName}, pID: ${pID}`);
@@ -304,18 +311,19 @@ router.post('/addReviewPoint',(req,res,next)=>{
     var score = req.body.score;
 
 
-    console.log(`UserName: ${userName}, pID: ${pID}`);
+    console.log(`UserName: ${userName}, pID: ${pID}, content: ${content}, score: ${score}`);
     p = DButilsAzure.execQuery(`
         Insert INTO Reviews
+        (uName, pID, content, score)
         VALUES
-             ('${userName}',${pID},'${content}',${score})`
+             ('${userName}', ${pID}, '${content}', ${score});`
         );
     p
         .then(result=> updateRank(pID))
         .then(result=> res.status(Enums.status_Created).send(result))
         .catch(error => {
             console.log(error.message);
-            res.status(Enums.status_Bad_Request).send(error.message );
+            res.status(Enums.status_Bad_Request).send(error );
         });
 });
 
