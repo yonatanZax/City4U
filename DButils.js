@@ -146,9 +146,9 @@ module.exports.create_tables_qry = '\n' +
     '\tpID\t\t\tINT\t\t    FOREIGN KEY REFERENCES Points(pID)\t\tON UPDATE CASCADE ON DELETE CASCADE,\n' +
     '\tcontent\t\tTEXT\t    ,\n' +
     '\tscore\t\tINT\t\t    NOT NULL,\n' +
+    '\ttime_stamp  DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,\n' +
     '\tCONSTRAINT  SCORE_CON   check (score between 1 and 5),\n' +
     '\tPRIMARY KEY(uName, pID)\n' +
-    '\n' +
     ');\n' +
     '\n' +
     '\n' +

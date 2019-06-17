@@ -54,25 +54,26 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 //middleware
-// app.use('/users', (req, res, next)=>{
-//     const bearerHeader = req.headers['x-auth-token'];
-//     if(typeof bearerHeader !== 'undefined'){
-//         req.token = bearerHeader.split(' ')[0];
-//
-//         jwt.verify(req.token,secret,(err, authData)=>{
-//             if(err){
-//                 res.status(Enums.status_Forbidden).json({location: "TokenVerify", message: err.message});
-//             }
-//             else{
-//                 req.userName = authData['username'];
-//                 next();
-//             }
-//         });
-//     }
-//     else{
-//         res.status(Enums.status_Bad_Request).send( "Auth: Un Authorized Token.");
-//     }
-// });
+app.use('/users', (req, res, next)=>{
+    var header = req.headers;
+    const bearerHeader = req.headers['x-auth-token'];
+    if(typeof bearerHeader !== 'undefined'){
+        req.token = bearerHeader.split(' ')[0];
+
+        jwt.verify(req.token,secret,(err, authData)=>{
+            if(err){
+                res.status(Enums.status_Forbidden).json({location: "TokenVerify", message: err.message});
+            }
+            else{
+                req.userName = authData['username'];
+                next();
+            }
+        });
+    }
+    else{
+        res.status(Enums.status_Bad_Request).send( "Auth: Un Authorized Token.");
+    }
+});
 
 
 // ***  Routers use    ***
@@ -107,20 +108,6 @@ module.exports = app;
 module.exports = {DButilsAzure : DButilsAzure};
 
 
-
-
-// *********   Lab Example  ******************
-
-app.get('/select', function(req, res){
-    DButilsAzure.execQuery("SELECT * FROM users")
-        .then(function(result){
-            res.send(result)
-        })
-        .catch(function(err){
-            console.log(err);
-            res.send(err);
-        })
-});
 
 
 

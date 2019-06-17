@@ -140,6 +140,41 @@ router.get('/getTwoReviews/:pID',(req,res)=>{
 
 
 
+// Todo - /getUserQuestion - OK
+router.get('/getUserQuestion/:uName', function(req, res, next) {
+    var params = req.params;
+    var userName = params.uName;
+
+    p = DButilsAzure.execQuery(`
+        SELECT qID,question
+        FROM Questions
+        WHERE qID = (
+            SELECT Top(1) qID 
+            FROM Users_Questions 
+            WHERE uName = '${userName}'
+            ORDER BY NEWID()
+        );
+        `);
+
+    p
+        .then(result=>{
+            if(result.length > 0){
+                res.status(Enums.status_OK).send(result);
+            }else{
+                res.status(Enums.status_Bad_Request).send('NotExists');
+            }
+        })
+        .catch(error => {
+            console.log(error.message);
+            res.status(Enums.status_Bad_Request).send(error.message );
+        });
+
+
+});
+
+
+
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -147,36 +182,36 @@ router.get('/', function(req, res, next) {
 });
 
 
+//
+// router.post("/verifyTokenExample", (req, res) => {
+//     const token = req.header("x-auth-token");
+//     // no token
+//     if (!token) res.status(Enums.status_Unauthorized).send("Access denied. No token provided.");
+//     // verify token
+//     try {
+//         const decoded = jwt.verify(token, secret);
+//         req.decoded = decoded;
+//         if (req.decoded.admin)
+//             res.status(Enums.status_OK).send({ result: "Hello admin." });
+//         else
+//             res.status(Enums.status_OK).send({ result: "Hello user." });
+//     } catch (exception) {
+//         res.status(Enums.status_Bad_Request).send("Invalid token.");
+//     }
+// });
 
-router.post("/verifyTokenExample", (req, res) => {
-    const token = req.header("x-auth-token");
-    // no token
-    if (!token) res.status(Enums.status_Unauthorized).send("Access denied. No token provided.");
-    // verify token
-    try {
-        const decoded = jwt.verify(token, secret);
-        req.decoded = decoded;
-        if (req.decoded.admin)
-            res.status(Enums.status_OK).send({ result: "Hello admin." });
-        else
-            res.status(Enums.status_OK).send({ result: "Hello user." });
-    } catch (exception) {
-        res.status(Enums.status_Bad_Request).send("Invalid token.");
-    }
-});
-
-
-
-
-// ***  Token - login example   ***
-
-router.post("/getTokenExample", (req, res) => {
-    payload = { name: "a", admin: true };
-    options = { expiresIn: "1d" };
-    const token = jwt.sign(payload, secret, options);
-    res.send(token);
-});
-
+//
+//
+//
+// // ***  Token - login example   ***
+//
+// router.post("/getTokenExample", (req, res) => {
+//     payload = { name: "a", admin: true };
+//     options = { expiresIn: "1d" };
+//     const token = jwt.sign(payload, secret, options);
+//     res.send(token);
+// });
+//
 
 
 
