@@ -9,42 +9,6 @@ var Enums = require('../Enum');
 
 
 
-
-/*  Get - getUserQuestion   */
-// Todo - /getUserQuestion - OK
-router.get('/getUserQuestion/:uName', function(req, res, next) {
-  var params = req.params;
-  var userName = params.uName;
-
-    p = DButilsAzure.execQuery(`
-        SELECT qID,question
-        FROM Questions
-        WHERE qID = (
-            SELECT Top(1) qID 
-            FROM Users_Questions 
-            WHERE uName = '${userName}'
-            ORDER BY NEWID()
-        );
-        `);
-
-    p
-        .then(result=>{
-            if(result.length > 0){
-                res.status(Enums.status_OK).send(result);
-            }else{
-    res.status(Enums.status_Bad_Request).send('NotExists');
-  }
-        })
-        .catch(error => {
-            console.log(error.message);
-            res.status(Enums.status_Bad_Request).send(error.message );
-        });
-
-
-});
-
-
-
 /*  Post - answerUserQuestion   */
 // Todo - /answerUserQuestion - OK
 router.post("/answerUserQuestion",(req,res)=>{
@@ -185,9 +149,9 @@ router.get('/getUserAllSavedPoints/:uName', function(req, res, next) {
     var userName = params.uName;
 
     p = DButilsAzure.execQuery(`
-            SELECT pID 
-            FROM Users_Points 
-            WHERE (uName = '${userName}')
+            SELECT * 
+            FROM Users_Points, Points
+            WHERE (Users_Points.uName = '${userName}' and Users_Points.pID = Points.pID)
             ORDER by savePosition;
     `);
     p
@@ -248,9 +212,9 @@ function updateRank(pID){
 }
 
 // Todo - /updateSavedPointOrder
-router.put('/updateSavedPointOrder',(req,res,next)=>{
+router.post('/updateSavedPointOrder',(req,res,next)=>{
     var userName = req.body.uName;
-    var orderedPoints = JSON.parse(req.body.pID);
+    var orderedPoints = req.body.pID;
 
     let query = '';
 
