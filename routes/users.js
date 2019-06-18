@@ -149,9 +149,9 @@ router.get('/getUserAllSavedPoints/:uName', function(req, res, next) {
     var userName = params.uName;
 
     p = DButilsAzure.execQuery(`
-            SELECT pID 
-            FROM Users_Points 
-            WHERE (uName = '${userName}')
+            SELECT * 
+            FROM Users_Points, Points
+            WHERE (Users_Points.uName = '${userName}' and Users_Points.pID = Points.pID)
             ORDER by savePosition;
     `);
     p

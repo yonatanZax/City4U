@@ -36,7 +36,7 @@ app.listen(port, () => {
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-auth-token");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, authToken");
     next();
 });
 
@@ -54,26 +54,26 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 //middleware
-app.use('/users', (req, res, next)=>{
-    var header = req.headers;
-    const bearerHeader = req.headers['x-auth-token'];
-    if(typeof bearerHeader !== 'undefined'){
-        req.token = bearerHeader.split(' ')[0];
-
-        jwt.verify(req.token,secret,(err, authData)=>{
-            if(err){
-                res.status(Enums.status_Forbidden).json({location: "TokenVerify", message: err.message});
-            }
-            else{
-                req.userName = authData['username'];
-                next();
-            }
-        });
-    }
-    else{
-        res.status(Enums.status_Bad_Request).send( "Auth: Un Authorized Token.");
-    }
-});
+// app.use('/users', (req, res, next)=>{
+//     var header = req.headers;
+//     const bearerHeader = req.headers['authToken'];
+//     if(typeof bearerHeader !== 'undefined'){
+//         req.token = bearerHeader.split(' ')[0];
+//
+//         jwt.verify(req.token,secret,(err, authData)=>{
+//             if(err){
+//                 res.status(Enums.status_Forbidden).json({location: "TokenVerify", message: err.message});
+//             }
+//             else{
+//                 req.userName = authData['username'];
+//                 next();
+//             }
+//         });
+//     }
+//     else{
+//         res.status(Enums.status_Bad_Request).send( "Auth: Un Authorized Token.");
+//     }
+// });
 
 
 // ***  Routers use    ***
