@@ -6,35 +6,29 @@ var DButilsAzure = require('../DButils');
 var Enums = require('../Enum');
 
 
+const jwt = require("jsonwebtoken");
+let secret = "ImGroot";
 
 
+//middleware
+function authToken(headers, uName){
+    const token = headers['authtoken'];
+    if(typeof token !== 'undefined'){
 
-
-/*  Get - getUserQuestion   */
-// Todo - /getUserQuestions - OK
-router.get('/getUserQuestions/:uName', function(req, res, next) {
-  var params = req.params;
-  var userName = params.uName;
-
-    p = DButilsAzure.execQuery(`
-        SELECT Top(1) qID 
-        FROM Users_Questions 
-        WHERE uName = '${userName}'`);
-    p
-        .then(result=>{
-            if(result.length > 0){
-                res.status(Enums.status_OK).send(result);
-            }else{
-                res.status(Enums.status_Bad_Request).send('NotExists');
+        try{
+            const decoder = jwt.verify(token, secret);
+            if (decoder.name === uName){
+                return true;
             }
-        })
-        .catch(error => {
-            console.log(error.message);
-            res.status(Enums.status_Bad_Request).send(error.message );
-        });
+        }catch (e) {
+            return false;
+        }
 
+    }
 
-});
+    return false;
+
+};
 
 
 
@@ -48,17 +42,21 @@ router.post("/answerUserQuestion",(req,res)=>{
 
 
     p = DButilsAzure.execQuery(`
-        SELECT answer 
-        FROM Users_Questions 
-        WHERE uName = '${userName}' AND qID = ${question}`);
+        
+        SELECT answer,pass
+        FROM Users , Users_Questions
+        WHERE Users_Questions.uName = '${userName}' AND Users.uName = '${userName}' AND qID = ${question}`
+    );
+
+
     p
         .then(result=>{
             if(result.length === 0){
-                res.status(Enums.status_Bad_Request).send('NotExists');
+                res.status(Enums.status_OK).send('NotExists');
             }else if(result[0].answer === answer){
-                res.status(Enums.status_OK).send('Correct');
+                res.status(Enums.status_OK).send({password: result[0].pass});
             }else{
-                res.status(Enums.status_Bad_Request).send('Incorrect');
+                res.status(Enums.status_OK).send('Incorrect');
             }
         })
         .catch(error => {
@@ -148,7 +146,18 @@ router.get('/getUserTwoSavedPoints/:uName', function(req, res, next) {
 
 // Todo - /addPointIDToSavedList  - OK
 router.post('/addPointIDToSavedList',(req,res,next)=>{
+
+
     var userName = req.body.uName;
+
+    var auth = authToken(req.headers, userName);
+
+    if (!auth){
+        res.status(Enums.status_Unauthorized).send('unauthorized' );
+        return;
+    }
+
+
     var pID = req.body.pID;
     console.log(`UserName: ${userName}, pID: ${pID}`);
     p = DButilsAzure.execQuery(`
@@ -178,10 +187,10 @@ router.get('/getUserAllSavedPoints/:uName', function(req, res, next) {
     var userName = params.uName;
 
     p = DButilsAzure.execQuery(`
-        SELECT pID 
-        FROM Users_Points 
-        WHERE (uName = '${userName}')
-        ORDER by savePosition
+            SELECT * 
+            FROM Users_Points, Points
+            WHERE (Users_Points.uName = '${userName}' and Users_Points.pID = Points.pID)
+            ORDER by savePosition;
     `);
     p
         .then(result=>{
@@ -198,8 +207,19 @@ router.get('/getUserAllSavedPoints/:uName', function(req, res, next) {
 
 
 // Todo - /deleteSavedPoint - OK
-router.delete('/deleteSavedPoint',(req,res,next)=>{
+router.post('/deleteSavedPoint',(req,res,next)=>{
+
     var userName = req.body.uName;
+    var auth = authToken(req.headers, userName);
+
+    if (!auth){
+        res.status(Enums.status_Unauthorized).send('unauthorized' );
+        return;
+    }
+
+
+
+
     var pID = req.body.pID;
     console.log(`UserName: ${userName}, pID: ${pID}`);
     p = DButilsAzure.execQuery(`
@@ -242,8 +262,17 @@ function updateRank(pID){
 
 // Todo - /updateSavedPointOrder
 router.put('/updateSavedPointOrder',(req,res,next)=>{
+
     var userName = req.body.uName;
-    var orderedPoints = JSON.parse(req.body.pID);
+    var auth = authToken(req.headers, userName);
+
+    if (!auth){
+        res.status(Enums.status_Unauthorized).send('unauthorized' );
+        return;
+    }
+
+
+    var orderedPoints = req.body.pID;
 
     let query = '';
 
@@ -280,7 +309,7 @@ router.get('/getPointsByName/:pName',(req,res,next)=>{
     var pName = params.pName;
 
     p = DButilsAzure.execQuery(`
-        SELECT pID
+        SELECT *
         FROM Points
         WHERE (pName LIKE '%${pName}%');
     
@@ -298,26 +327,89 @@ router.get('/getPointsByName/:pName',(req,res,next)=>{
 
 // Todo - /addReviewPoint - OK
 router.post('/addReviewPoint',(req,res,next)=>{
+
     var userName = req.body.uName;
+    var auth = authToken(req.headers, userName);
+
+    if (!auth){
+        res.status(Enums.status_Unauthorized).send('unauthorized' );
+        return;
+    }
+
+
     var pID = req.body.pID;
     var content = req.body.content;
     var score = req.body.score;
 
 
-    console.log(`UserName: ${userName}, pID: ${pID}`);
+    console.log(`UserName: ${userName}, pID: ${pID}, content: ${content}, score: ${score}`);
     p = DButilsAzure.execQuery(`
         Insert INTO Reviews
+        (uName, pID, content, score)
         VALUES
-             ('${userName}',${pID},'${content}',${score})`
+             ('${userName}', ${pID}, '${content}', ${score});`
         );
     p
         .then(result=> updateRank(pID))
-        .then(result=> res.status(Enums.status_Created).send(result))
+        .then(result=> res.status(Enums.status_Created).send("Added"))
+        .catch(error => {
+            console.log(error.message);
+            res.status(Enums.status_Bad_Request).send(error );
+        });
+});
+
+
+// Todo - /getUserQuestion - OK
+router.get('/getUserQuestion/:uName', function(req, res, next) {
+    var params = req.params;
+    var userName = params.uName;
+
+    p = DButilsAzure.execQuery(`
+        SELECT qID,question
+        FROM Questions
+        WHERE qID = (
+            SELECT Top(1) qID 
+            FROM Users_Questions 
+            WHERE uName = '${userName}'
+            ORDER BY NEWID()
+        );
+        `);
+
+    p
+        .then(result=>{
+            if(result.length > 0){
+                res.status(Enums.status_OK).send(result);
+            }else{
+                res.status(Enums.status_Bad_Request).send('NotExists');
+            }
+        })
         .catch(error => {
             console.log(error.message);
             res.status(Enums.status_Bad_Request).send(error.message );
         });
+
+
 });
+
+
+
+// Todo - /verify token - OK
+router.post('/verifyToken',(req,res)=>{
+
+    var userName = req.body.uName;
+    var auth = authToken(req.headers, userName);
+
+    if (!auth){
+        res.status(Enums.status_Unauthorized).send('unauthorized' );
+    }else {
+        res.status(Enums.status_OK).send('authorized' );
+    }
+
+});
+
+
+
+
 
 
 

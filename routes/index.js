@@ -97,7 +97,7 @@ router.post("/authUser",(req,res)=>{
     var userName = req.body.uName;
     var password = req.body.password;
 
-    p = DButilsAzure.execQuery(`
+    let p = DButilsAzure.execQuery(`
         SELECT uName 
         FROM Users 
         WHERE uName = '${userName}' AND CONVERT(VARCHAR, pass) = '${password}'
@@ -121,6 +121,27 @@ router.post("/authUser",(req,res)=>{
 
 });
 
+router.get('/getTwoReviews/:pID',(req,res)=>{
+    var pID = req.params.pID;
+    let p = DButilsAzure.execQuery(`
+            SELECT TOP(2) *
+            FROM Reviews
+            WHERE pID = '${pID}'
+            ORDER BY time_stamp DESC;
+
+            UPDATE Points
+            SET viewed_counter = viewed_counter + 1
+            WHERE pID = '${pID}';
+    `);
+    p
+        .then(result =>res.status(Enums.status_OK).send(result))
+        .catch(error =>res.status(Enums.status_Bad_Request).send(error.message));
+});
+
+
+
+
+
 
 
 
@@ -131,36 +152,36 @@ router.get('/', function(req, res, next) {
 });
 
 
+//
+// router.post("/verifyTokenExample", (req, res) => {
+//     const token = req.header("x-auth-token");
+//     // no token
+//     if (!token) res.status(Enums.status_Unauthorized).send("Access denied. No token provided.");
+//     // verify token
+//     try {
+//         const decoded = jwt.verify(token, secret);
+//         req.decoded = decoded;
+//         if (req.decoded.admin)
+//             res.status(Enums.status_OK).send({ result: "Hello admin." });
+//         else
+//             res.status(Enums.status_OK).send({ result: "Hello user." });
+//     } catch (exception) {
+//         res.status(Enums.status_Bad_Request).send("Invalid token.");
+//     }
+// });
 
-router.post("/verifyTokenExample", (req, res) => {
-    const token = req.header("x-auth-token");
-    // no token
-    if (!token) res.status(Enums.status_Unauthorized).send("Access denied. No token provided.");
-    // verify token
-    try {
-        const decoded = jwt.verify(token, secret);
-        req.decoded = decoded;
-        if (req.decoded.admin)
-            res.status(Enums.status_OK).send({ result: "Hello admin." });
-        else
-            res.status(Enums.status_OK).send({ result: "Hello user." });
-    } catch (exception) {
-        res.status(Enums.status_Bad_Request).send("Invalid token.");
-    }
-});
-
-
-
-
-// ***  Token - login example   ***
-
-router.post("/getTokenExample", (req, res) => {
-    payload = { name: "a", admin: true };
-    options = { expiresIn: "1d" };
-    const token = jwt.sign(payload, secret, options);
-    res.send(token);
-});
-
+//
+//
+//
+// // ***  Token - login example   ***
+//
+// router.post("/getTokenExample", (req, res) => {
+//     payload = { name: "a", admin: true };
+//     options = { expiresIn: "1d" };
+//     const token = jwt.sign(payload, secret, options);
+//     res.send(token);
+// });
+//
 
 
 
