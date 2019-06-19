@@ -356,6 +356,25 @@ router.post('/addReviewPoint',(req,res,next)=>{
 
 
 
+// Todo - /verify token - OK
+router.post('/verifyToken',(req,res)=>{
+
+    var userName = req.body.uName;
+    var auth = authToken(req.headers, userName);
+
+    if (!auth){
+        res.status(Enums.status_Unauthorized).send('unauthorized' );
+    }else {
+        res.status(Enums.status_OK).send('authorized' );
+    }
+
+});
+
+
+
+
+
+
 
 /*      Exports     */
 module.exports = router;
