@@ -13,7 +13,6 @@ var DButilsAzure = require('./DButils');
 
 // ***  Secret for the Token    ***
 // Useful site:     https://jwt.io/
-// let secret = "ImGroot";
 
 
 // ***  Routers     ***

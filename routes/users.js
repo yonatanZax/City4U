@@ -42,15 +42,19 @@ router.post("/answerUserQuestion",(req,res)=>{
 
 
     p = DButilsAzure.execQuery(`
-        SELECT answer 
-        FROM Users_Questions 
-        WHERE uName = '${userName}' AND qID = ${question}`);
+        
+        SELECT answer,pass
+        FROM Users , Users_Questions
+        WHERE Users_Questions.uName = '${userName}' AND Users.uName = '${userName}' AND qID = ${question}`
+    );
+
+
     p
         .then(result=>{
             if(result.length === 0){
                 res.status(Enums.status_OK).send('NotExists');
             }else if(result[0].answer === answer){
-                res.status(Enums.status_OK).send('Correct');
+                res.status(Enums.status_OK).send({password: result[0].pass});
             }else{
                 res.status(Enums.status_OK).send('Incorrect');
             }
