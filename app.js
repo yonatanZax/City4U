@@ -4,14 +4,16 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var DButilsAzure = require('./DButils');
-var Enums = require('./Enum');
-const jwt = require("jsonwebtoken");
+
+
+// var Enums = require('./Enum');
+// const jwt = require("jsonwebtoken");
 
 
 
 // ***  Secret for the Token    ***
 // Useful site:     https://jwt.io/
-const secret = "ImGroot";
+// let secret = "ImGroot";
 
 
 // ***  Routers     ***
@@ -36,7 +38,7 @@ app.listen(port, () => {
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-auth-token");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, authToken");
     next();
 });
 
@@ -50,29 +52,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-
-
-//middleware
-// app.use('/users', (req, res, next)=>{
-//     const bearerHeader = req.headers['x-auth-token'];
-//     if(typeof bearerHeader !== 'undefined'){
-//         req.token = bearerHeader.split(' ')[0];
-//
-//         jwt.verify(req.token,secret,(err, authData)=>{
-//             if(err){
-//                 res.status(Enums.status_Forbidden).json({location: "TokenVerify", message: err.message});
-//             }
-//             else{
-//                 req.userName = authData['username'];
-//                 next();
-//             }
-//         });
-//     }
-//     else{
-//         res.status(Enums.status_Bad_Request).send( "Auth: Un Authorized Token.");
-//     }
-// });
 
 
 // ***  Routers use    ***

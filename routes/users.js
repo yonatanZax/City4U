@@ -6,6 +6,29 @@ var DButilsAzure = require('../DButils');
 var Enums = require('../Enum');
 
 
+const jwt = require("jsonwebtoken");
+let secret = "ImGroot";
+
+
+//middleware
+function authToken(headers, uName){
+    const token = headers['authtoken'];
+    if(typeof token !== 'undefined'){
+
+        try{
+            const decoder = jwt.verify(token, secret);
+            if (decoder.name === uName){
+                return true;
+            }
+        }catch (e) {
+            return false;
+        }
+
+    }
+
+    return false;
+
+};
 
 
 
@@ -120,6 +143,15 @@ router.get('/getUserTwoSavedPoints/:uName', function(req, res, next) {
 // Todo - /addPointIDToSavedList  - OK
 router.post('/addPointIDToSavedList',(req,res,next)=>{
     var userName = req.body.uName;
+
+    var auth = authToken(req.headers, userName);
+
+    if (!auth){
+        res.status(Enums.status_Unauthorized).send('unauthorized' );
+        return;
+    }
+
+
     var pID = req.body.pID;
     console.log(`UserName: ${userName}, pID: ${pID}`);
     p = DButilsAzure.execQuery(`
@@ -171,6 +203,16 @@ router.get('/getUserAllSavedPoints/:uName', function(req, res, next) {
 // Todo - /deleteSavedPoint - OK
 router.post('/deleteSavedPoint',(req,res,next)=>{
     var userName = req.body.uName;
+    var auth = authToken(req.headers, userName);
+
+    if (!auth){
+        res.status(Enums.status_Unauthorized).send('unauthorized' );
+        return;
+    }
+
+
+
+
     var pID = req.body.pID;
     console.log(`UserName: ${userName}, pID: ${pID}`);
     p = DButilsAzure.execQuery(`
@@ -214,6 +256,14 @@ function updateRank(pID){
 // Todo - /updateSavedPointOrder
 router.post('/updateSavedPointOrder',(req,res,next)=>{
     var userName = req.body.uName;
+    var auth = authToken(req.headers, userName);
+
+    if (!auth){
+        res.status(Enums.status_Unauthorized).send('unauthorized' );
+        return;
+    }
+
+
     var orderedPoints = req.body.pID;
 
     let query = '';
@@ -270,6 +320,14 @@ router.get('/getPointsByName/:pName',(req,res,next)=>{
 // Todo - /addReviewPoint - OK
 router.post('/addReviewPoint',(req,res,next)=>{
     var userName = req.body.uName;
+    var auth = authToken(req.headers, userName);
+
+    if (!auth){
+        res.status(Enums.status_Unauthorized).send('unauthorized' );
+        return;
+    }
+
+
     var pID = req.body.pID;
     var content = req.body.content;
     var score = req.body.score;
@@ -290,6 +348,25 @@ router.post('/addReviewPoint',(req,res,next)=>{
             res.status(Enums.status_Bad_Request).send(error );
         });
 });
+
+
+
+// Todo - /verify token - OK
+router.post('/verifyToken',(req,res)=>{
+
+    var userName = req.body.uName;
+    var auth = authToken(req.headers, userName);
+
+    if (!auth){
+        res.status(Enums.status_Unauthorized).send('unauthorized' );
+    }else {
+        res.status(Enums.status_OK).send('authorized' );
+    }
+
+});
+
+
+
 
 
 
