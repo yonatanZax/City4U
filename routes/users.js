@@ -261,7 +261,7 @@ function updateRank(pID){
 }
 
 // Todo - /updateSavedPointOrder
-router.post('/updateSavedPointOrder',(req,res,next)=>{
+router.put('/updateSavedPointOrder',(req,res,next)=>{
 
     var userName = req.body.uName;
     var auth = authToken(req.headers, userName);
@@ -351,11 +351,44 @@ router.post('/addReviewPoint',(req,res,next)=>{
         );
     p
         .then(result=> updateRank(pID))
-        .then(result=> res.status(Enums.status_Created).send(result))
+        .then(result=> res.status(Enums.status_Created).send("Added"))
         .catch(error => {
             console.log(error.message);
             res.status(Enums.status_Bad_Request).send(error );
         });
+});
+
+
+// Todo - /getUserQuestion - OK
+router.get('/getUserQuestion/:uName', function(req, res, next) {
+    var params = req.params;
+    var userName = params.uName;
+
+    p = DButilsAzure.execQuery(`
+        SELECT qID,question
+        FROM Questions
+        WHERE qID = (
+            SELECT Top(1) qID 
+            FROM Users_Questions 
+            WHERE uName = '${userName}'
+            ORDER BY NEWID()
+        );
+        `);
+
+    p
+        .then(result=>{
+            if(result.length > 0){
+                res.status(Enums.status_OK).send(result);
+            }else{
+                res.status(Enums.status_Bad_Request).send('NotExists');
+            }
+        })
+        .catch(error => {
+            console.log(error.message);
+            res.status(Enums.status_Bad_Request).send(error.message );
+        });
+
+
 });
 
 
