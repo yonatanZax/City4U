@@ -59,8 +59,6 @@ router.get('/getCountries', function(req,res){
 
 
 
-
-
 /*      Exports     */
 module.exports.router = router;
 module.exports.countries = country_list;
